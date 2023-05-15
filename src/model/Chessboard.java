@@ -21,6 +21,7 @@ public class Chessboard {
         initPieces();
     }
 
+    //ok
     private void initGrid() {
         for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
@@ -28,7 +29,7 @@ public class Chessboard {
             }
         }
     }
-    private void initSets() {
+    private void initSets() {//地形初始化
         river.add(new ChessboardPoint(3,1));
         river.add(new ChessboardPoint(3,2));
         river.add(new ChessboardPoint(4,1));
@@ -54,7 +55,7 @@ public class Chessboard {
         dens.add(new ChessboardPoint(8,3));
     }
 
-    private void initPieces() {
+    private void initPieces() {//初始化每个位置应该放的物品
         grid[2][6].setPiece(new ChessPiece(PlayerColor.BLUE, "Elephant",8));
         grid[0][0].setPiece(new ChessPiece(PlayerColor.BLUE, "Lion",7));
         grid[0][6].setPiece(new ChessPiece(PlayerColor.BLUE, "Tiger",6));
@@ -72,6 +73,15 @@ public class Chessboard {
         grid[7][5].setPiece(new ChessPiece(PlayerColor.RED, "Dog",3));
         grid[7][1].setPiece(new ChessPiece(PlayerColor.RED, "Cat",2));
         grid[6][6].setPiece(new ChessPiece(PlayerColor.RED, "Rat",1));
+    }
+    public void removeAllPiece(){
+        for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
+            for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
+                if(grid[i][j]!=null){
+
+                }
+            }
+        }
     }
 
     private ChessPiece getChessPieceAt(ChessboardPoint point) {

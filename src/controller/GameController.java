@@ -6,8 +6,8 @@ import model.Constant;
 import model.PlayerColor;
 import model.Chessboard;
 import model.ChessboardPoint;
+import view.ChessComponent;
 import view.CellComponent;
-import view.animalsChessComponent.ElephantChessComponent;
 import view.ChessboardComponent;
 
 /**
@@ -39,15 +39,19 @@ public class GameController implements GameListener {
         view.repaint();
     }
 
+    //ok
     private void initialize() {
         for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
-
             }
         }
     }
+    //todo restart
+    //todo save
+    //todo load
 
     // after a valid move swap the player
+    //todo 输出turn和哪一方
     private void swapColor() {
         currentPlayer = currentPlayer == PlayerColor.BLUE ? PlayerColor.RED : PlayerColor.BLUE;
     }
@@ -70,10 +74,9 @@ public class GameController implements GameListener {
             // TODO: if the chess enter Dens or Traps and so on
         }
     }
-
     // click a cell with a chess
     @Override
-    public void onPlayerClickChessPiece(ChessboardPoint point, ElephantChessComponent component) {
+    public void onPlayerClickChessPiece(ChessboardPoint point, ChessComponent component) {
         if (selectedPoint == null) {
             if (model.getChessPieceOwner(point).equals(currentPlayer)) {
                 selectedPoint = point;
@@ -87,4 +90,11 @@ public class GameController implements GameListener {
         }
         // TODO: Implement capture function
     }
+    public void RestartGame(){
+
+    }
+    public void loadGameFromFile(){
+        //List<String> lines= Files.readAllLines(Path.of());
+    }
+
 }

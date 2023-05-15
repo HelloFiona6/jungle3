@@ -2,6 +2,7 @@ package view.animalsChessComponent;
 
 
 import model.PlayerColor;
+import view.ChessComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,29 +11,13 @@ import java.awt.*;
  * This is the equivalent of the ChessPiece class,
  * but this class only cares how to draw Chess on ChessboardComponent
  */
-public class LeopardChessComponent extends JComponent {
-    private PlayerColor owner;
+public class LeopardChessComponent extends ChessComponent {
 
-    private boolean selected;
     private ImageIcon image;
 
     public LeopardChessComponent(PlayerColor owner, int size) {
-        this.owner = owner;
-        this.selected = false;
-        setSize(size/2, size/2);
-        setLocation(2,2);
-        setVisible(true);
+        super(owner,size);
     }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
