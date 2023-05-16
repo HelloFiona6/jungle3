@@ -46,7 +46,6 @@ public class GameController implements GameListener {
             }
         }
     }
-    //todo restart
     //todo save
     //todo load
 
@@ -91,7 +90,19 @@ public class GameController implements GameListener {
         // TODO: Implement capture function
     }
     public void RestartGame(){
-
+        /*
+        1. model 清除所有的棋子
+        2. model 添加初始化棋子
+        3. view 清除绘制过的棋子
+        4. view 重新add棋子
+        5. view.repaint()
+        6. 行棋方重新设为蓝色
+         */
+        model.removeAllPiece();
+        model.initPieces();
+        view.removeAllPieces();
+        view.initiateChessComponent(model);
+        view.repaint();
     }
     public void loadGameFromFile(){
         //List<String> lines= Files.readAllLines(Path.of());

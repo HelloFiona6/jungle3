@@ -55,30 +55,30 @@ public class Chessboard {
         dens.add(new ChessboardPoint(8,3));
     }
 
-    private void initPieces() {//初始化每个位置应该放的物品
-        grid[2][6].setPiece(new ChessPiece(PlayerColor.BLUE, "Elephant",8));
-        grid[0][0].setPiece(new ChessPiece(PlayerColor.BLUE, "Lion",7));
-        grid[0][6].setPiece(new ChessPiece(PlayerColor.BLUE, "Tiger",6));
-        grid[2][2].setPiece(new ChessPiece(PlayerColor.BLUE, "Leopard",5));
-        grid[2][4].setPiece(new ChessPiece(PlayerColor.BLUE, "Wolf",4));
-        grid[1][1].setPiece(new ChessPiece(PlayerColor.BLUE, "Dog",3));
-        grid[1][5].setPiece(new ChessPiece(PlayerColor.BLUE, "Cat",2));
-        grid[2][0].setPiece(new ChessPiece(PlayerColor.BLUE, "Rat",1));
+    public void initPieces() {//初始化每个位置应该放的物品
+        grid[2][6].setPiece(new ElephantChessPiece(PlayerColor.BLUE, "Elephant",8));
+        grid[0][0].setPiece(new LionChessPiece(PlayerColor.BLUE, "Lion",7));
+        grid[0][6].setPiece(new TigerChessPiece(PlayerColor.BLUE, "Tiger",6));
+        grid[2][2].setPiece(new LeopardChessPiece(PlayerColor.BLUE, "Leopard",5));
+        grid[2][4].setPiece(new WolfChessPiece(PlayerColor.BLUE, "Wolf",4));
+        grid[1][1].setPiece(new DogChessPiece(PlayerColor.BLUE, "Dog",3));
+        grid[1][5].setPiece(new CatChessPiece(PlayerColor.BLUE, "Cat",2));
+        grid[2][0].setPiece(new RatChessPiece(PlayerColor.BLUE, "Rat",1));
 
-        grid[6][0].setPiece(new ChessPiece(PlayerColor.RED, "Elephant",8));
-        grid[8][6].setPiece(new ChessPiece(PlayerColor.RED, "Lion",7));
-        grid[8][0].setPiece(new ChessPiece(PlayerColor.RED, "Tiger",6));
-        grid[6][4].setPiece(new ChessPiece(PlayerColor.RED, "Leopard",5));
-        grid[6][2].setPiece(new ChessPiece(PlayerColor.RED, "Wolf",4));
-        grid[7][5].setPiece(new ChessPiece(PlayerColor.RED, "Dog",3));
-        grid[7][1].setPiece(new ChessPiece(PlayerColor.RED, "Cat",2));
-        grid[6][6].setPiece(new ChessPiece(PlayerColor.RED, "Rat",1));
+        grid[6][0].setPiece(new ElephantChessPiece(PlayerColor.RED, "Elephant",8));
+        grid[8][6].setPiece(new LionChessPiece(PlayerColor.RED, "Lion",7));
+        grid[8][0].setPiece(new TigerChessPiece(PlayerColor.RED, "Tiger",6));
+        grid[6][4].setPiece(new LeopardChessPiece(PlayerColor.RED, "Leopard",5));
+        grid[6][2].setPiece(new WolfChessPiece(PlayerColor.RED, "Wolf",4));
+        grid[7][5].setPiece(new DogChessPiece(PlayerColor.RED, "Dog",3));
+        grid[7][1].setPiece(new CatChessPiece(PlayerColor.RED, "Cat",2));
+        grid[6][6].setPiece(new RatChessPiece(PlayerColor.RED, "Rat",1));
     }
     public void removeAllPiece(){
         for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
-                if(grid[i][j]!=null){
-
+                if(grid[i][j].getPiece()!=null){
+                    grid[i][j].setPiece(null);
                 }
             }
         }
@@ -127,6 +127,8 @@ public class Chessboard {
         return getGridAt(point).getPiece().getOwner();
     }
 
+
+    //todo isValidMove 在Chesspiece里写了个抽象方法
     public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
         if (getChessPieceAt(src) == null || getChessPieceAt(dest) != null) {
             return false;

@@ -9,6 +9,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             ChessGameFrame mainFrame = new ChessGameFrame(1100, 810);//窗口初始化
             GameController gameController = new GameController(mainFrame.getChessboardComponent(), new Chessboard());
+            mainFrame.setGameController(gameController);
             mainFrame.setVisible(true);
             // todo 存储用户信息
         });

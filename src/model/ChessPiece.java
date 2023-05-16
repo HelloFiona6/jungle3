@@ -1,7 +1,7 @@
 package model;
 
 
-public class ChessPiece {
+public abstract class ChessPiece {
     // the owner of the chess
     private PlayerColor owner;
 
@@ -20,6 +20,9 @@ public class ChessPiece {
         return false;
     }
 
+    public abstract boolean isValidMove(ChessboardPoint target);
+    public abstract boolean isValidCapture(ChessboardPoint src, ChessboardPoint dest);
+    //todo 这里isValidCapture传参可以改，我随便写的
     public String getName() {
         return name;
     }

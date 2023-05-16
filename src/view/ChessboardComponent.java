@@ -63,43 +63,36 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
                 if (grid[i][j].getPiece() != null) {
                     ChessPiece chessPiece = grid[i][j].getPiece();
                     //System.out.println(chessPiece.getOwner());
-                    if (chessPiece.getName().equals("Elephant")) {
-                        gridComponents[i][j].add(
+                    switch (chessPiece.getName()) {
+                        case "Elephant" -> gridComponents[i][j].add(
                                 new ElephantChessComponent(
                                         chessPiece.getOwner(),
                                         CHESS_SIZE));
-                    } else if (chessPiece.getName().equals("Lion")) {
-                        gridComponents[i][j].add(
+                        case "Lion" -> gridComponents[i][j].add(
                                 new LionChessComponent(
                                         chessPiece.getOwner(),
                                         CHESS_SIZE));
-                    } else if (chessPiece.getName().equals("Leopard")) {
-                        gridComponents[i][j].add(
+                        case "Leopard" -> gridComponents[i][j].add(
                                 new LeopardChessComponent(
                                         chessPiece.getOwner(),
                                         CHESS_SIZE));
-                    } else if (chessPiece.getName().equals("Tiger")) {
-                        gridComponents[i][j].add(
+                        case "Tiger" -> gridComponents[i][j].add(
                                 new TigerChessComponent(
                                         chessPiece.getOwner(),
                                         CHESS_SIZE));
-                    } else if (chessPiece.getName().equals("Cat")) {
-                        gridComponents[i][j].add(
+                        case "Cat" -> gridComponents[i][j].add(
                                 new CatChessComponent(
                                         chessPiece.getOwner(),
                                         CHESS_SIZE));
-                    } else if (chessPiece.getName().equals("Dog")) {
-                        gridComponents[i][j].add(
+                        case "Dog" -> gridComponents[i][j].add(
                                 new DogChessComponent(
                                         chessPiece.getOwner(),
                                         CHESS_SIZE));
-                    } else if (chessPiece.getName().equals("Wolf")) {
-                        gridComponents[i][j].add(
+                        case "Wolf" -> gridComponents[i][j].add(
                                 new WolfChessComponent(
                                         chessPiece.getOwner(),
                                         CHESS_SIZE));
-                    } else if (chessPiece.getName().equals("Rat")) {
-                        gridComponents[i][j].add(
+                        case "Rat" -> gridComponents[i][j].add(
                                 new RatChessComponent(
                                         chessPiece.getOwner(),
                                         CHESS_SIZE));
@@ -107,7 +100,16 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
                 }
             }
         }
-
+    }
+    //view 层移除所有棋子
+    public  void removeAllPieces(){
+        for (int i = 0; i < CHESSBOARD_ROW_SIZE.getNum(); i++) {
+            for (int j = 0; j < CHESSBOARD_COL_SIZE.getNum(); j++) {
+                if(gridComponents[i][j].getComponents().length>0){//有棋子
+                    removeChessComponentAtGrid(new ChessboardPoint(i,j));
+                }
+            }
+        }
     }
 
     public void initiateGridComponents() {
@@ -172,7 +174,7 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
         getGridComponentAt(point).add(chess);
     }
 
-    public ChessComponent removeChessComponentAtGrid(ChessboardPoint point) {
+    public ChessComponent removeChessComponentAtGrid(ChessboardPoint point) {//在小格子中删除
         // Note re-validation is required after remove / removeAll.
         ChessComponent chess = (ChessComponent) getGridComponentAt(point).getComponents()[0];
         getGridComponentAt(point).removeAll();
@@ -206,7 +208,7 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
     protected void processMouseEvent(MouseEvent e) {
         if (e.getID() == MouseEvent.MOUSE_PRESSED) {
             JComponent clickedComponent = (JComponent) getComponentAt(e.getX(), e.getY());
-            if (clickedComponent.getComponentCount() == 0) {
+            if (clickedComponent.getComponentCount() == 0) {//判断格子里有没有棋子
                 System.out.print("None chess here and ");
                 gameController.onPlayerClickCell(getChessboardPoint(e.getPoint()), (CellComponent) clickedComponent);
             } else {
