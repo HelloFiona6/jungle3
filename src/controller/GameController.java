@@ -10,6 +10,12 @@ import view.ChessComponent;
 import view.CellComponent;
 import view.ChessboardComponent;
 
+import javax.swing.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
 /**
  * Controller is the connection between model and view,
  * when a Controller receive a request from a view, the Controller
@@ -26,7 +32,9 @@ public class GameController implements GameListener {
 
     // Record whether there is a selected piece before
     private ChessboardPoint selectedPoint;
-    private int turn=0;
+    private int turn=1;
+    private JLabel statusLabel=new JLabel("");
+    private JLabel turnLabel=new JLabel("");
 
     public GameController(ChessboardComponent view, Chessboard model) {
         this.view = view;
@@ -37,6 +45,30 @@ public class GameController implements GameListener {
         initialize();
         view.initiateChessComponent(model);
         view.repaint();
+    }
+
+    public void setStatusLabel(JLabel statusLabel) {
+        this.statusLabel = statusLabel;
+    }
+
+    public JLabel getStatusLabel() {
+        return statusLabel;
+    }
+
+    public void setTurnLabel(JLabel turnLabel) {
+        this.turnLabel = turnLabel;
+    }
+
+    public JLabel getTurnLabel() {
+        return turnLabel;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
     }
 
     //ok
@@ -50,9 +82,15 @@ public class GameController implements GameListener {
     //todo load
 
     // after a valid move swap the player
-    //todo 输出turn和哪一方
     private void swapColor() {
         currentPlayer = currentPlayer == PlayerColor.BLUE ? PlayerColor.RED : PlayerColor.BLUE;
+        statusLabel.setText("Current Player: "+currentPlayer.name());
+        //System.out.println(currentPlayer);
+    }
+    private void addTurn(){
+        if(currentPlayer==PlayerColor.BLUE) turn++;
+        turnLabel.setText("Turn: "+turn);
+        System.out.println(turn);
     }
 
     private boolean win() {
@@ -69,6 +107,7 @@ public class GameController implements GameListener {
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
             selectedPoint = null;
             swapColor();
+            addTurn();
             view.repaint();
             // TODO: if the chess enter Dens or Traps and so on
         }
@@ -89,6 +128,8 @@ public class GameController implements GameListener {
         }
         // TODO: Implement capture function
     }
+
+    //ok
     public void RestartGame(){
         /*
         1. model 清除所有的棋子
@@ -103,9 +144,28 @@ public class GameController implements GameListener {
         view.removeAllPieces();
         view.initiateChessComponent(model);
         view.repaint();
+        swapColor();
+        currentPlayer=PlayerColor.BLUE;
+        turn=1;
+
     }
-    public void loadGameFromFile(){
-        //List<String> lines= Files.readAllLines(Path.of());
+    public void loadGameFromFile(String path) throws IOException {
+        try {
+            List<String> lines = Files.readAllLines(Path.of(path));
+            //todo
+            for (String s : lines) {
+                System.out.println(s);
+            }
+            model.removeAllPiece();
+            model.initPieces(lines);
+            view.removeAllPieces();
+            view.initiateChessComponent(model);
+            view.repaint();
+            //todo
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 
 }
+

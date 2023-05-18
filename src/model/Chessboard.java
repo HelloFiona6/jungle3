@@ -1,6 +1,10 @@
 package model;
 
+import model.ChessPieces.*;
+import view.ChessComponent;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,9 +18,7 @@ public class Chessboard {
     private  final Set<ChessboardPoint> dens=new HashSet<>();
 
     public Chessboard() {
-        this.grid =
-                new Cell[Constant.CHESSBOARD_ROW_SIZE.getNum()][Constant.CHESSBOARD_COL_SIZE.getNum()];//19X19
-
+        this.grid = new Cell[Constant.CHESSBOARD_ROW_SIZE.getNum()][Constant.CHESSBOARD_COL_SIZE.getNum()];//19X19
         initGrid();
         initPieces();
     }
@@ -74,6 +76,11 @@ public class Chessboard {
         grid[7][1].setPiece(new CatChessPiece(PlayerColor.RED, "Cat",2));
         grid[6][6].setPiece(new RatChessPiece(PlayerColor.RED, "Rat",1));
     }
+
+    //读取文件时候用
+    public void initPieces(List<String> lines){
+
+    }
     public void removeAllPiece(){
         for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
@@ -111,6 +118,7 @@ public class Chessboard {
             throw new IllegalArgumentException("Illegal chess move!");
         }
         setChessPiece(dest, removeChessPiece(src));
+        //System.out.printf("%s moved from [%d,%d] to [%d,%d]", ChessComponent.,src.getRow(),src.getCol(),dest.getRow(),dest.getCol());
     }
 
     public void captureChessPiece(ChessboardPoint src, ChessboardPoint dest) {

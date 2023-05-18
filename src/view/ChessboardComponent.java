@@ -30,6 +30,14 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
 
     private GameController gameController;
 
+    /*
+    棋盘中还包含什么
+    1. 长宽和棋子大小
+    2. 可以用鼠标点
+    3. 能layout
+    4. 网格组成可以初始化
+    5.看得见
+     */
     public ChessboardComponent(int chessSize) {
         CHESS_SIZE = chessSize;
         int width = CHESS_SIZE * 7;
@@ -50,6 +58,7 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
     public void initiateChessComponent(Chessboard chessboard) {
         Cell[][] grid = chessboard.getGrid();
 
+        //清空一下
         for (int i = 0; i < CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < CHESSBOARD_COL_SIZE.getNum(); j++) {
                 gridComponents[i][j].removeAll();
@@ -112,6 +121,7 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
         }
     }
 
+    //给棋盘分布定性
     public void initiateGridComponents() {
 
         riverCell.clear();
@@ -145,20 +155,21 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
         densCell.add(new ChessboardPoint(0,3));
         densCell.add(new ChessboardPoint(8,3));
 
+        //遍历+放颜色
         for (int i = 0; i < CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < CHESSBOARD_COL_SIZE.getNum(); j++) {
                 ChessboardPoint temp = new ChessboardPoint(i, j);
                 CellComponent cell;
                 if (riverCell.contains(temp)) {
                     cell = new CellComponent(Color.CYAN, calculatePoint(i, j), CHESS_SIZE);
-                    this.add(cell);
+                    //this.add(cell);
                 }else if(trapCell.contains(temp)) {
                     cell = new CellComponent(Color.DARK_GRAY, calculatePoint(i, j), CHESS_SIZE);
                 }else if(densCell.contains(temp)){
                     cell = new CellComponent(Color.BLACK, calculatePoint(i, j), CHESS_SIZE);
                 } else {
                     cell = new CellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
-                    this.add(cell);
+                    //this.add(cell);
                 }
                 this.add(cell);
                 gridComponents[i][j] = cell;

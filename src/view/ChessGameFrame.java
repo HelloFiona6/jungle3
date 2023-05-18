@@ -4,6 +4,7 @@ import controller.GameController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * 这个类表示游戏过程中的整个游戏界面，是一切的载体
@@ -15,6 +16,8 @@ public class ChessGameFrame extends JFrame {
 
     private final int ONE_CHESS_SIZE;
     private GameController gameController;
+    private JLabel statusLabel;
+    private JLabel turnLabel;
 
     private ChessboardComponent chessboardComponent;
     public ChessGameFrame(int width, int height) {
@@ -30,7 +33,8 @@ public class ChessGameFrame extends JFrame {
 
 
         addChessboard();
-        addLabel();
+        addPlayerLabel();
+        addTurnLabel();
         addLoadButton();
         addRestartButton();
     }
@@ -51,6 +55,19 @@ public class ChessGameFrame extends JFrame {
         this.gameController = gameController;
     }
 
+    public JLabel getStatusLabel() {
+        return statusLabel;
+    }
+
+    public void setStatusLabel(JLabel statusLabel) {
+        this.statusLabel = statusLabel;
+    }
+
+
+    public JLabel getTurnLabel() {
+        return turnLabel;
+    }
+
     /**
      * 在游戏面板中添加棋盘
      */
@@ -63,13 +80,22 @@ public class ChessGameFrame extends JFrame {
     /**
      * 在游戏面板中添加标签
      */
-    private void addLabel() {
-        JLabel statusLabel = new JLabel("Sample label");
+    private void addPlayerLabel() {
+        statusLabel = new JLabel("Current Player: BLUE");
         statusLabel.setLocation(HEIGTH, HEIGTH / 10);
-        statusLabel.setSize(200, 60);
+        statusLabel.setSize(300, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(statusLabel);
     }
+
+    private void addTurnLabel(){
+        turnLabel=new JLabel("Turn: 1");
+        turnLabel.setLocation(HEIGTH, HEIGTH / 7);
+        turnLabel.setSize(300, 60);
+        turnLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(turnLabel);
+    }
+
 
     /**
      * 在游戏面板中增加一个按钮，如果按下的话就会显示Hello, world!
@@ -83,13 +109,7 @@ public class ChessGameFrame extends JFrame {
 //        button.setFont(new Font("Rockwell", Font.BOLD, 20));
 //        add(button);
 //    }
-    /**
-     *model 清除所有棋子
-     * model 添加初始化棋子
-     * view 清除所有绘制过的棋子
-     * view 重新add棋子
-     * view.repaint()
-     */
+
     private void addRestartButton() {
         JButton button = new JButton("Restart");
         button.addActionListener((e) -> //触发的事件
@@ -103,6 +123,13 @@ public class ChessGameFrame extends JFrame {
         add(button);
     }
 
+    /**
+     *model 清除所有棋子
+     * model 添加初始化棋子
+     * view 清除所有绘制过的棋子
+     * view 重新add棋子
+     * view.repaint()
+     */
     private void addLoadButton() {
         JButton button = new JButton("Load");
         button.setLocation(HEIGTH, HEIGTH / 10 + 240);
@@ -110,10 +137,14 @@ public class ChessGameFrame extends JFrame {
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
 
-        button.addActionListener(e -> {
+        button.addActionListener(e -> {//点完弹出个面板
             System.out.println("Click load");
             String path = JOptionPane.showInputDialog(this,"Input Path here");
-            //gameController.loadGameFromFile(path);
+            try {
+                gameController.loadGameFromFile(path);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
     }
 

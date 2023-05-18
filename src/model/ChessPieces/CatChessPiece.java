@@ -1,13 +1,17 @@
-package model;
+package model.ChessPieces;
 
-public class CatChessPiece extends ChessPiece{
+import model.ChessPiece;
+import model.ChessboardPoint;
+import model.PlayerColor;
+
+public class CatChessPiece extends ChessPiece {
     public CatChessPiece(PlayerColor owner, String name, int rank){
         super(owner,name,rank);
     }
     @Override
     public boolean isValidMove(ChessboardPoint target) {
         //todo
-        return false;
+        return true;
     }
 
     @Override
