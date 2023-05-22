@@ -121,7 +121,7 @@ public class GameController implements GameListener {
             recordMove(selectedPoint,point,getTurn(),currentPlayer);//记录怎么走
             model.moveChessPiece(selectedPoint, point);//走
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
-
+            //System.out.println(steps);
             if(model.inDens(point)) {//如果进入兽穴
                 view.repaint();
                 densWin();
@@ -148,7 +148,7 @@ public class GameController implements GameListener {
 
                 //show ValidMoves
             }
-        } else if (selectedPoint.equals(point)) {
+        } else if (selectedPoint.equals(point)) {//点两下
             //hideValidMove
             selectedPoint = null;
             component.setSelected(false);
@@ -159,6 +159,18 @@ public class GameController implements GameListener {
         如果这个棋子被吃了
             删了这个棋子
          */
+        if(model.isValidCapture(selectedPoint,point)&&selectedPoint!=null){//可以吃
+            recordMove(selectedPoint,point,getTurn(),currentPlayer);//记录怎么走
+            view.removeChessComponentAtGrid(point);
+            model.moveChessPiece(selectedPoint, point);//走
+            view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
+            selectedPoint = null;
+            swapColor();
+            addTurn();
+            view.repaint();
+        }else{
+            System.out.println("Illegal capture");
+        }
     }
 
     //ok

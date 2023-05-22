@@ -95,9 +95,6 @@ public class Chessboard {
         }
     }
 
-    private ChessPiece getChessPieceAt(ChessboardPoint point) {
-        return getGridAt(point).getPiece();
-    }
 
     private Cell getGridAt(ChessboardPoint point) {
         return grid[point.getRow()][point.getCol()];
@@ -202,6 +199,11 @@ public class Chessboard {
         return canmove;
 
     }
+    private ChessPiece getChessPieceAt(ChessboardPoint point){
+        return getGridAt(point).getPiece();
+    }
+
+
 
     public boolean isValidCapture(ChessboardPoint src, ChessboardPoint dest) {
         // TODO:Fix this method
