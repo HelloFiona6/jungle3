@@ -5,6 +5,7 @@ import view.ChessComponent;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -20,6 +21,7 @@ public class Chessboard {
     public Chessboard() {
         this.grid = new Cell[Constant.CHESSBOARD_ROW_SIZE.getNum()][Constant.CHESSBOARD_COL_SIZE.getNum()];//19X19
         initGrid();
+        initSets();
         initPieces();
     }
 
@@ -111,7 +113,7 @@ public class Chessboard {
         return chessPiece;
     }
 
-    private void setChessPiece(ChessboardPoint point, ChessPiece chessPiece) {
+    private void setChessPiece(ChessboardPoint point, ChessPiece chessPiece) {//在某个点上放了某个棋子
         getGridAt(point).setPiece(chessPiece);
     }
 
@@ -144,7 +146,7 @@ public class Chessboard {
 
     public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
         ChessPiece piecesrc = getChessPieceAt(src);
-        //ChessPiece piecedest = getChessPieceAt(dest);
+        ChessPiece piecedest = getChessPieceAt(dest);
         boolean canmove = false;
         if (src == null) {
             canmove = false;
@@ -299,13 +301,12 @@ public class Chessboard {
         return t;
 
     }
-    public boolean inDens(){
-
-        if(grid[0][3]==null&&grid[8][3]==null){
-            return false;
-        }else{
-           return true;
-    }}
+    public boolean inDens(ChessboardPoint point){
+        for(ChessboardPoint p:dens){
+            if(p.equals(point)) return true;
+        }
+        return false;
+    }
     public boolean inTrap() {
         if (grid[0][2] == null && grid[0][4] == null && grid[1][3] == null && grid[8][2] == null && grid[8][4] == null && grid[7][3] == null ) {
             return false;

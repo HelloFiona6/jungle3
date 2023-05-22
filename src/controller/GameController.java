@@ -2,18 +2,16 @@ package controller;
 
 
 import listener.GameListener;
-import model.Constant;
-import model.PlayerColor;
-import model.Chessboard;
-import model.ChessboardPoint;
+import model.*;
 import view.ChessComponent;
 import view.CellComponent;
 import view.ChessboardComponent;
 
 import javax.swing.*;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,12 +33,17 @@ public class GameController implements GameListener {
     private int turn=1;
     private JLabel statusLabel=new JLabel("");
     private JLabel turnLabel=new JLabel("");
+    private List<Step> steps; //undo
+    private Step step;
+    private PlayerColor winner;
 
+    //ok
     public GameController(ChessboardComponent view, Chessboard model) {
         this.view = view;
         this.model = model;
         this.currentPlayer = PlayerColor.BLUE;
 
+        steps=new ArrayList<>();
         view.registerController(this);
         initialize();
         view.initiateChessComponent(model);
@@ -93,22 +96,44 @@ public class GameController implements GameListener {
         System.out.println(turn);
     }
 
-    private boolean win() {
+    //win有两种，一种是走到兽穴，一种是对方棋子无路可走
+    private void densWin() {
         // TODO: Check the board if there is a winner
-        return false;
+        winner = currentPlayer;
+        System.out.println("Winner is " + winner);
+        //view.getChessGameFrame().recordWin();
+        view.optionWinPanel(winner);
+    }
+    //一方棋子无路可走
+    private void win() {
+        // TODO: Check the board if there is a winner
+        winner = currentPlayer;
+        System.out.println("Winner is " + winner);
+        //view.getChessGameFrame().recordWin();
+        view.optionWinPanel(winner);
     }
 
 
     // click an empty cell
     @Override
     public void onPlayerClickCell(ChessboardPoint point, CellComponent component) {
-        if (selectedPoint != null && model.isValidMove(selectedPoint, point)) {
-            model.moveChessPiece(selectedPoint, point);
-            view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
+        if (selectedPoint != null && model.isValidMove(selectedPoint, point)) {//可以走
+            recordMove(selectedPoint,point,getTurn(),currentPlayer);//记录怎么走
+            model.moveChessPiece(selectedPoint, point);//走
+            view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
+
+            if(model.inDens(point)) {//如果进入兽穴
+                view.repaint();
+                densWin();
+            }
+            if(model.inTrap()) {
+                //rank将为1
+            }
             selectedPoint = null;
             swapColor();
             addTurn();
             view.repaint();
+
             // TODO: if the chess enter Dens or Traps and so on
         }
     }
@@ -120,17 +145,24 @@ public class GameController implements GameListener {
                 selectedPoint = point;
                 component.setSelected(true);
                 component.repaint();
+
+                //show ValidMoves
             }
         } else if (selectedPoint.equals(point)) {
+            //hideValidMove
             selectedPoint = null;
             component.setSelected(false);
             component.repaint();
         }
         // TODO: Implement capture function
+        /*
+        如果这个棋子被吃了
+            删了这个棋子
+         */
     }
 
     //ok
-    public void RestartGame(){
+    public void restartGame(){
         /*
         1. model 清除所有的棋子
         2. model 添加初始化棋子
@@ -147,11 +179,39 @@ public class GameController implements GameListener {
         swapColor();
         currentPlayer=PlayerColor.BLUE;
         turn=1;
+        winner=null;
+        steps.clear();
+        //可以走的格子 validMoves.clear();
 
     }
-    public void loadGameFromFile(String path) throws IOException {
+    public void unDo(){
+        Step s=steps.remove(steps.size()-1);
+        // todo model
+        view.undo(s);
+        swapColor();
+        view.repaint();
+    }
+    public void saveGameToFile(String fileName) {
+        try{
+            FileOutputStream fileOut=new FileOutputStream(fileName);
+            ObjectOutputStream out=new ObjectOutputStream(fileOut);
+            for (Step s : steps) {
+                out.writeObject(s);
+            }
+            out.close();
+            fileOut.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void loadGameFromFile(String fileName){
         try {
-            List<String> lines = Files.readAllLines(Path.of(path));
+            FileInputStream fileIn=new FileInputStream(fileName);
+            ObjectInputStream in=new ObjectInputStream(fileIn);
+            Step step1=(Step) in.readObject();
+            in.close();
+            fileIn.close();
+            List<String> lines = Files.readAllLines(Path.of(fileName));
             //todo
             for (String s : lines) {
                 System.out.println(s);
@@ -164,8 +224,26 @@ public class GameController implements GameListener {
             //todo
         }catch (IOException e){
             throw new RuntimeException(e);
+        }catch (ClassNotFoundException e){
+            e.printStackTrace();
         }
     }
+    public void recordMove(ChessboardPoint from,ChessboardPoint to,int turn,PlayerColor owner){
+        /**
+        *在model.moveChessPiece里面加
+         */
+        Step s=new Step(from,to,turn,owner);
+        steps.add(s);
+    }
+
+//    public void showValidMoves(ChessboardPoint point) {
+//        validMoves = model.getValidMoves(point);
+//        view.showValidMoves(validMoves);
+//    }
+//
+//    public void hideValidMoves() {
+//        view.hideValidMoves(validMoves);
+//    }
 
 }
 

@@ -38,6 +38,9 @@ public class ChessboardPoint {
 
     @Override
     public String toString() {
-        return "("+row + ","+col+") " + "on the chessboard is clicked!";
-    }
+        return String.valueOf(row)+ col;
+    }//改一下，便于存储
+//    public String toString() {
+//        return "("+row + ","+col+") " + "on the chessboard is clicked!";
+//    }
 }

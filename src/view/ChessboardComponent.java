@@ -2,10 +2,7 @@ package view;
 
 
 import controller.GameController;
-import model.Cell;
-import model.ChessPiece;
-import model.Chessboard;
-import model.ChessboardPoint;
+import model.*;
 import view.animalsChessComponent.*;
 
 import javax.swing.*;
@@ -177,14 +174,45 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
         }
     }
 
+    //ok
     public void registerController(GameController gameController) {
         this.gameController = gameController;
     }
 
+    public void undo(Step step){
+        ChessPiece chess=step.getChess();
+        ChessPiece eatenChess=step.getEatenChess();
+        ChessboardPoint from=step.getFrom();
+        ChessboardPoint to=step.getTo();
+        /*
+        把to的棋子拿走，出现在from里
+        如果有棋子被吃了
+            新建一个
+         */
+        removeChessComponentAtGrid(to);
+        restoreChess(from,chess);
+        if(eatenChess!=null){
+            restoreChess(to,eatenChess);
+        }
+    }
+    public void restoreChess(ChessboardPoint loc,ChessPiece c){//复原棋子
+        switch (c.getName()) {
+            case "Elephant" -> setChessComponentAtGrid(loc, new ElephantChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Lion" -> setChessComponentAtGrid(loc, new LionChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Tiger" -> setChessComponentAtGrid(loc, new TigerChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Leopard" -> setChessComponentAtGrid(loc, new LeopardChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Wolf" -> setChessComponentAtGrid(loc, new WolfChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Dog" -> setChessComponentAtGrid(loc, new DogChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Cat" -> setChessComponentAtGrid(loc, new CatChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Rat" -> setChessComponentAtGrid(loc, new RatChessComponent(c.getOwner(), CHESS_SIZE));
+        }
+    }
+    //ok
     public void setChessComponentAtGrid(ChessboardPoint point, ChessComponent chess) {
         getGridComponentAt(point).add(chess);
     }
 
+    //ok
     public ChessComponent removeChessComponentAtGrid(ChessboardPoint point) {//在小格子中删除
         // Note re-validation is required after remove / removeAll.
         ChessComponent chess = (ChessComponent) getGridComponentAt(point).getComponents()[0];
@@ -194,27 +222,30 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
         return chess;
     }
 
+    //ok
     private CellComponent getGridComponentAt(ChessboardPoint point) {
         return gridComponents[point.getRow()][point.getCol()];
     }
 
+    //ok
     private ChessboardPoint getChessboardPoint(Point point) {
         System.out.println("[" + point.y / CHESS_SIZE + ", " + point.x / CHESS_SIZE + "] Clicked");
         return new ChessboardPoint(point.y / CHESS_SIZE, point.x / CHESS_SIZE);
     }
 
+    //ok
     private Point calculatePoint(int row, int col) {
         return new Point(col * CHESS_SIZE, row * CHESS_SIZE);
     }
 
-    //win 弹窗
-
+    //ok
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
 
+    //ok 找鼠标点到哪里
     @Override
     protected void processMouseEvent(MouseEvent e) {
         if (e.getID() == MouseEvent.MOUSE_PRESSED) {
@@ -226,6 +257,23 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
                 System.out.print("One chess here and ");
                 gameController.onPlayerClickChessPiece(getChessboardPoint(e.getPoint()), (ChessComponent) clickedComponent.getComponents()[0]);
             }
+        }
+    }
+
+    //胜利弹窗
+    public void optionWinPanel(PlayerColor winner){
+        //按钮标签
+        Object[] options={"New Game","Exit"};//再来一局还是返回主页
+        //显示对话框
+        int result=JOptionPane.showOptionDialog(null,"The winner is "+winner,"Win!",
+                JOptionPane.DEFAULT_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
+        //每个按钮的结果
+        if(result==JOptionPane.YES_OPTION){
+            JFrame topFrame=(JFrame) JOptionPane.getRootFrame();
+            topFrame.dispose();
+            gameController.restartGame();
+        }else{
+            //返回主页面
         }
     }
 }

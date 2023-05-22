@@ -36,6 +36,7 @@ public class ChessGameFrame extends JFrame {
         addPlayerLabel();
         addTurnLabel();
         addLoadButton();
+        addSaveButton();
         addRestartButton();
     }
 
@@ -115,7 +116,7 @@ public class ChessGameFrame extends JFrame {
         button.addActionListener((e) -> //触发的事件
         {
             //JOptionPane.showMessageDialog(this, "Hello, world!");
-            gameController.RestartGame();//点完重新加载游戏
+            gameController.restartGame();//点完重新加载游戏
         });
         button.setLocation(HEIGTH, HEIGTH / 10 + 120);
         button.setSize(200, 60);
@@ -140,11 +141,20 @@ public class ChessGameFrame extends JFrame {
         button.addActionListener(e -> {//点完弹出个面板
             System.out.println("Click load");
             String path = JOptionPane.showInputDialog(this,"Input Path here");
-            try {
-                gameController.loadGameFromFile(path);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            gameController.loadGameFromFile(path);
+        });
+    }
+    private void addSaveButton() {
+        JButton button = new JButton("Save");
+        button.setLocation(HEIGTH, HEIGTH / 10 + 300);
+        button.setSize(200, 60);
+        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(button);
+
+        button.addActionListener(e -> {//点完弹出个面板
+            System.out.println("Click load");
+            String path = JOptionPane.showInputDialog(this,"Input Path here");
+            gameController.saveGameToFile(path);
         });
     }
 
