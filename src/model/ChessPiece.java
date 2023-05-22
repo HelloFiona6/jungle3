@@ -24,18 +24,25 @@ public abstract class ChessPiece {
         }
     }
 
-    public abstract boolean isValidMove(ChessboardPoint target);
+   // public abstract boolean isValidMove(ChessboardPoint target);
     public abstract boolean isValidCapture(ChessboardPoint src, ChessboardPoint dest);
     //todo 这里isValidCapture传参可以改，我随便写的
     public String getName() {
         return name;
     }
 
-    public int getRank() {
+   public int getRank() {
         return rank;
     }
 
     public PlayerColor getOwner() {
         return owner;
+    }
+
+    public void setRank(boolean x ) {
+        if(x==true) {
+            rank=0;
+        }
+
     }
 }
