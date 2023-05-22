@@ -145,12 +145,13 @@ public class Chessboard {
         ChessPiece piecesrc = getChessPieceAt(src);
         ChessPiece piecedest = getChessPieceAt(dest);
         boolean canmove = false;
-        if (src == null) {
+        if (piecesrc == null) {
             canmove = false;
         }
-        if (src != null && dest != null) {
+        if (piecesrc != null && piecedest == null) {
             boolean acrossriver = false;
             boolean ratinriver = false;
+            boolean acrossallriver =false;
             boolean t = true;
             for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
                 for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
@@ -163,6 +164,15 @@ public class Chessboard {
             }
             for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
                 for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
+                    if (((i == 3 && j == 1) && (i == 3 && j == 2)) || ((i == 4 && j == 1) && (i == 4 && j == 2)) || ((i == 5 && j == 1) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 3 && j == 5) )|| ((i == 4 && j == 4) && (i == 4 && j == 5)) || ((i == 5 && j == 4) && (i == 5 && j == 5))||((i == 3 && j == 1) && (i == 4 && j == 1) &&(i == 5 && j == 1)) ||( (i == 3 && j == 2) && (i == 4 && j == 2) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 4 && j == 4) && ((i == 5 && j == 4)) || ((i == 3 && j == 5))&& (i == 4 && j == 5) && (i == 5 && j == 5))) {
+                        acrossallriver = true;
+                    } else {
+                        acrossallriver = false;
+                    }
+                }
+            }
+            for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
+                for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
                     if (grid[i][j] != null) {
                         ratinriver = true;
                     } else {
@@ -170,6 +180,7 @@ public class Chessboard {
                     }
                 }
             }
+
             if (calculateDistance(src, dest) == 1) {
                 if (piecesrc.getName() == "Rat") {
                     canmove = true;
@@ -192,9 +203,9 @@ public class Chessboard {
                 }
             }
         }
-        if (src != null && dest == null) {
-            canmove =false;
-           // canmove = isValidCapture(src, dest);
+        if (piecesrc != null && piecedest != null) {
+           // canmove =false;
+           canmove = isValidCapture(src, dest);
         }
         return canmove;
 
@@ -213,6 +224,7 @@ public class Chessboard {
         ChessPiece piecedest = getChessPieceAt(dest);
         boolean acrossriver = true;
         boolean ratinriver =true;
+        boolean acrossallriver=true;
         boolean t = true;
         for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
             for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
@@ -224,7 +236,15 @@ public class Chessboard {
             }
         }
 
-
+        for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
+            for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
+                if (((i == 3 && j == 1) && (i == 3 && j == 2)) || ((i == 4 && j == 1) && (i == 4 && j == 2)) || ((i == 5 && j == 1) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 3 && j == 5) )|| ((i == 4 && j == 4) && (i == 4 && j == 5)) || ((i == 5 && j == 4) && (i == 5 && j == 5))||((i == 3 && j == 1) && (i == 4 && j == 1) &&(i == 5 && j == 1)) ||( (i == 3 && j == 2) && (i == 4 && j == 2) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 4 && j == 4) && ((i == 5 && j == 4)) || ((i == 3 && j == 5))&& (i == 4 && j == 5) && (i == 5 && j == 5))) {
+                    acrossallriver = true;
+                } else {
+                    acrossallriver = false;
+                }
+            }
+        }
 
         for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
             for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
@@ -270,7 +290,7 @@ public class Chessboard {
             }
 */
 
-            if (src != null && dest != null) {
+            if (piecesrc != null && piecedest != null) {
                 if (piecedest.canCapture(piecedest) == false) {
                     t = false;
                 } else {
@@ -291,7 +311,12 @@ public class Chessboard {
                             if (ratinriver == true) {
                                 t = false;
                             } else {
-                                t = true;
+                                if(acrossallriver==true){
+                                    t = true;
+                                }else{
+                                    t = false;
+                                }
+
                             }
                         }
                     }
