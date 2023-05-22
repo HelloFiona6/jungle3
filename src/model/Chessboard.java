@@ -149,7 +149,7 @@ public class Chessboard {
             canmove = false;
         }
         if ((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8) {
-            canmove= false;
+            canmove = false;
         }
         if (piecesrc != null && piecedest == null) {
             boolean acrossriver = false;
@@ -176,7 +176,7 @@ public class Chessboard {
             }
             for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
                 for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
-                    if (grid[i][j] != null) {
+                    if (grid[i][j].getPiece().getName() != "Rat") {
                         ratinriver = true;
                     } else {
                         ratinriver = false;
@@ -259,7 +259,7 @@ public class Chessboard {
             }
         }
 
-        if ((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8) {
+        if (((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8)||src==null) {
             return false;
         } else {
           /*  if (src == null) {
@@ -321,17 +321,22 @@ public class Chessboard {
 
                             }
                         }
+                    } else {
+                        t = false;
                     }
 
                 }
                 //Todo
+                if(piecesrc!=null&&piecedest==null){
+                    t=isValidMove(src,dest);
+                }
             }
         }
         return t;
 
     }
 
-    public void Trapiszero(ChessboardPoint point) {
+    public void TrapIsZero(ChessboardPoint point) {
         for (ChessboardPoint p : trap) {
             if (p.equals(point)) {
                 //ChessPiece inTrap=new
