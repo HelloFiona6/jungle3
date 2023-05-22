@@ -301,6 +301,17 @@ public class Chessboard {
         return t;
 
     }
+
+    public void  Trapiszero(ChessboardPoint point ){
+        for(ChessboardPoint p:trap){
+            if(p.equals(point)){
+                //ChessPiece inTrap=new
+                ChessPiece animalintrap = getChessPieceAt(point);
+                animalintrap.setRank(true);
+            }
+        }
+
+    }
     public boolean inDens(ChessboardPoint point){
         for(ChessboardPoint p:dens){
             if(p.equals(point)) return true;
