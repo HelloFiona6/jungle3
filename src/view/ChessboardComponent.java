@@ -158,14 +158,14 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
                 ChessboardPoint temp = new ChessboardPoint(i, j);
                 CellComponent cell;
                 if (riverCell.contains(temp)) {
-                    cell = new CellComponent(Color.CYAN, calculatePoint(i, j), CHESS_SIZE);
+                    cell = new CellComponent(new Color(137, 219, 232), calculatePoint(i, j), CHESS_SIZE);
                     //this.add(cell);
                 }else if(trapCell.contains(temp)) {
-                    cell = new CellComponent(Color.DARK_GRAY, calculatePoint(i, j), CHESS_SIZE);
+                    cell = new CellComponent(new Color(129, 112, 112), calculatePoint(i, j), CHESS_SIZE);
                 }else if(densCell.contains(temp)){
-                    cell = new CellComponent(Color.BLACK, calculatePoint(i, j), CHESS_SIZE);
+                    cell = new CellComponent(new Color(91, 15, 15), calculatePoint(i, j), CHESS_SIZE);
                 } else {
-                    cell = new CellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
+                    cell = new CellComponent(new Color(126, 147, 126), calculatePoint(i, j), CHESS_SIZE);
                     //this.add(cell);
                 }
                 this.add(cell);
@@ -179,9 +179,11 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
         this.gameController = gameController;
     }
 
+    public ChessGameFrame getChessGameFrame() {
+        return chessGameFrame;
+    }
+
     public void undo(Step step){
-        ChessPiece chess=step.getChess();
-        ChessPiece eatenChess=step.getEatenChess();
         ChessboardPoint from=step.getFrom();
         ChessboardPoint to=step.getTo();
         /*
@@ -190,22 +192,22 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
             新建一个
          */
         removeChessComponentAtGrid(to);
-        restoreChess(from,chess);
-        if(eatenChess!=null){
-            restoreChess(to,eatenChess);
-        }
     }
-    public void restoreChess(ChessboardPoint loc,ChessPiece c){//复原棋子
+    public void restoreChess(Step step){//复原棋子
+        ChessboardPoint to=step.getTo();
+        ChessPiece c=step.getChess();
+        ChessboardPoint from=step.getFrom();
         switch (c.getName()) {
-            case "Elephant" -> setChessComponentAtGrid(loc, new ElephantChessComponent(c.getOwner(), CHESS_SIZE));
-            case "Lion" -> setChessComponentAtGrid(loc, new LionChessComponent(c.getOwner(), CHESS_SIZE));
-            case "Tiger" -> setChessComponentAtGrid(loc, new TigerChessComponent(c.getOwner(), CHESS_SIZE));
-            case "Leopard" -> setChessComponentAtGrid(loc, new LeopardChessComponent(c.getOwner(), CHESS_SIZE));
-            case "Wolf" -> setChessComponentAtGrid(loc, new WolfChessComponent(c.getOwner(), CHESS_SIZE));
-            case "Dog" -> setChessComponentAtGrid(loc, new DogChessComponent(c.getOwner(), CHESS_SIZE));
-            case "Cat" -> setChessComponentAtGrid(loc, new CatChessComponent(c.getOwner(), CHESS_SIZE));
-            case "Rat" -> setChessComponentAtGrid(loc, new RatChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Elephant" -> setChessComponentAtGrid(to, new ElephantChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Lion" -> setChessComponentAtGrid(to, new LionChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Tiger" -> setChessComponentAtGrid(to, new TigerChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Leopard" -> setChessComponentAtGrid(to, new LeopardChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Wolf" -> setChessComponentAtGrid(to, new WolfChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Dog" -> setChessComponentAtGrid(to, new DogChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Cat" -> setChessComponentAtGrid(to, new CatChessComponent(c.getOwner(), CHESS_SIZE));
+            case "Rat" -> setChessComponentAtGrid(to, new RatChessComponent(c.getOwner(), CHESS_SIZE));
         }
+        removeChessComponentAtGrid(from);
     }
     //ok
     public void setChessComponentAtGrid(ChessboardPoint point, ChessComponent chess) {
@@ -269,9 +271,9 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
                 JOptionPane.DEFAULT_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
         //每个按钮的结果
         if(result==JOptionPane.YES_OPTION){
-            JFrame topFrame=(JFrame) JOptionPane.getRootFrame();
-            topFrame.dispose();
             gameController.restartGame();
+//            JFrame topFrame=(JFrame) JOptionPane.getRootFrame();
+//            topFrame.dispose();
         }else{
             //返回主页面
         }

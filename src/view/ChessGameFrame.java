@@ -4,6 +4,7 @@ import controller.GameController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -38,6 +39,7 @@ public class ChessGameFrame extends JFrame {
         addLoadButton();
         addSaveButton();
         addRestartButton();
+        addUndoButton();
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -140,8 +142,8 @@ public class ChessGameFrame extends JFrame {
 
         button.addActionListener(e -> {//点完弹出个面板
             System.out.println("Click load");
-            String path = JOptionPane.showInputDialog(this,"Input Path here");
-            gameController.loadGameFromFile(path);
+            //String path = JOptionPane.showInputDialog(this,"Input Path here");
+            gameController.loadGameFromFile();
         });
     }
     private void addSaveButton() {
@@ -152,13 +154,24 @@ public class ChessGameFrame extends JFrame {
         add(button);
 
         button.addActionListener(e -> {//点完弹出个面板
-            System.out.println("Click load");
-            String path = JOptionPane.showInputDialog(this,"Input Path here");
-            gameController.saveGameToFile(path);
+            System.out.println("Click save");
+            //String path = JOptionPane.showInputDialog(this,"Input Path here");
+            gameController.saveGameToFile();
         });
     }
 
+    private void addUndoButton() {
+        JButton button = new JButton("Undo");
+        button.setLocation(HEIGTH, HEIGTH / 10 + 360);
+        button.setSize(200, 60);
+        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(button);
 
+        button.addActionListener(e -> {//点完弹出个面板
+            System.out.println("Click uodo");
+            gameController.unDo();
+        });
+    }
 
 
 }

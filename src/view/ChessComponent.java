@@ -61,17 +61,17 @@ public class ChessComponent extends JComponent {//每个棋子的父类
         super.paintComponents(g);
 
         if (owner == PlayerColor.BLUE) {
-            g.setColor(Color.BLUE);
-            g.drawOval(0, 0, getWidth(), getHeight());
+            g.setColor(new Color(109, 136, 213));
+            g.fillOval(0, 0, getWidth(), getHeight());
         }
         else if (owner == PlayerColor.RED) {
-            g.setColor(Color.RED);
-            g.drawOval(0, 0, getWidth(), getHeight());
+            g.setColor(new Color(220, 135, 114));
+            g.fillOval(0, 0, getWidth(), getHeight());
         }
         //选中变黄
         if(isSelected()){
-            g.setColor(Color.ORANGE);
-            g.drawOval(0, 0, getWidth(), getHeight());
+            g.setColor( new Color(231, 215, 112));
+            g.fillOval(0, 0, getWidth(), getHeight());
         }
     }
 

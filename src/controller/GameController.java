@@ -9,8 +9,6 @@ import view.ChessboardComponent;
 
 import javax.swing.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,8 +79,6 @@ public class GameController implements GameListener {
             }
         }
     }
-    //todo save
-    //todo load
 
     // after a valid move swap the player
     private void swapColor() {
@@ -97,14 +93,6 @@ public class GameController implements GameListener {
     }
 
     //win有两种，一种是走到兽穴，一种是对方棋子无路可走
-    private void densWin() {
-        // TODO: Check the board if there is a winner
-        winner = currentPlayer;
-        System.out.println("Winner is " + winner);
-        //view.getChessGameFrame().recordWin();
-        view.optionWinPanel(winner);
-    }
-    //一方棋子无路可走
     private void win() {
         // TODO: Check the board if there is a winner
         winner = currentPlayer;
@@ -121,14 +109,13 @@ public class GameController implements GameListener {
             recordMove(selectedPoint,point,getTurn(),currentPlayer);//记录怎么走
             model.moveChessPiece(selectedPoint, point);//走
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
-            //System.out.println(steps);
+            System.out.println(steps);
             if(model.inDens(point)) {//如果进入兽穴
                 view.repaint();
-                densWin();
+                win();
             }
-            if(model.inTrap()) {
-                //rank将为1
-            }
+            //进入陷阱
+            model.trap(point,selectedPoint);
             selectedPoint = null;
             swapColor();
             addTurn();
@@ -153,17 +140,17 @@ public class GameController implements GameListener {
             selectedPoint = null;
             component.setSelected(false);
             component.repaint();
-        }
-        // TODO: Implement capture function
-        /*
-        如果这个棋子被吃了
-            删了这个棋子
-         */
-        if(model.isValidCapture(selectedPoint,point)&&selectedPoint!=null){//可以吃
+        }else if(model.isValidCapture(selectedPoint,point)&&selectedPoint!=null){//可以吃
             recordMove(selectedPoint,point,getTurn(),currentPlayer);//记录怎么走
             view.removeChessComponentAtGrid(point);
             model.moveChessPiece(selectedPoint, point);//走
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
+
+            //如果没有棋子可以走，或者没棋子了，另一方胜利
+            if(model.checkWin(currentPlayer)){
+                win();
+            }
+
             selectedPoint = null;
             swapColor();
             addTurn();
@@ -187,64 +174,77 @@ public class GameController implements GameListener {
         model.initPieces();
         view.removeAllPieces();
         view.initiateChessComponent(model);
-        view.repaint();
-        swapColor();
-        currentPlayer=PlayerColor.BLUE;
         turn=1;
+        addTurn();
+        currentPlayer=PlayerColor.RED;
+        swapColor();
+        view.repaint();
         winner=null;
         steps.clear();
         //可以走的格子 validMoves.clear();
 
     }
     public void unDo(){
-        Step s=steps.remove(steps.size()-1);
-        // todo model
-        view.undo(s);
-        swapColor();
-        view.repaint();
-    }
-    public void saveGameToFile(String fileName) {
-        try{
-            FileOutputStream fileOut=new FileOutputStream(fileName);
-            ObjectOutputStream out=new ObjectOutputStream(fileOut);
-            for (Step s : steps) {
-                out.writeObject(s);
-            }
-            out.close();
-            fileOut.close();
-        }catch (IOException e){
-            e.printStackTrace();
+        if(steps.size()==0){
+            System.out.println("Can not undo");
+        }else {
+            Step s = steps.remove(steps.size() - 1);
+            // todo model
+            view.undo(s);
+            swapColor();
+            view.repaint();
         }
     }
-    public void loadGameFromFile(String fileName){
-        try {
-            FileInputStream fileIn=new FileInputStream(fileName);
-            ObjectInputStream in=new ObjectInputStream(fileIn);
-            Step step1=(Step) in.readObject();
-            in.close();
-            fileIn.close();
-            List<String> lines = Files.readAllLines(Path.of(fileName));
-            //todo
-            for (String s : lines) {
-                System.out.println(s);
+    public void saveGameToFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showSaveDialog(view.getChessGameFrame());
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try {
+                FileOutputStream fileOut = new FileOutputStream(file);//写的是File形式的
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                out.writeObject(steps);
+                out.close();
+                fileOut.close();
+                System.out.println("Save in " + file);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            model.removeAllPiece();
-            model.initPieces(lines);
-            view.removeAllPieces();
-            view.initiateChessComponent(model);
-            view.repaint();
-            //todo
-        }catch (IOException e){
-            throw new RuntimeException(e);
-        }catch (ClassNotFoundException e){
-            e.printStackTrace();
+        }
+    }
+    public void loadGameFromFile(){
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(view.getChessGameFrame());//在哪个窗口上打开
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try {
+                FileInputStream fileIn = new FileInputStream(file);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                List<Step> stepList = (List<Step>) in.readObject();
+                restartGame();
+                for (Step s : stepList) {
+                    model.runStep(s);
+                    view.restoreChess(s);
+                }
+                steps = stepList;
+                in.close();
+                fileIn.close();
+                view.repaint();
+                //todo
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
     public void recordMove(ChessboardPoint from,ChessboardPoint to,int turn,PlayerColor owner){
         /**
         *在model.moveChessPiece里面加
          */
-        Step s=new Step(from,to,turn,owner);
+        ChessPiece chess= model.getChessPieceAt(from);
+        ChessPiece eatenChess= model.getChessPieceAt(to);
+        Step s=new Step(from,to,turn,owner,chess,eatenChess);
         steps.add(s);
     }
 
