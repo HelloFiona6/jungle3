@@ -12,6 +12,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 /**
  * Controller is the connection between model and view,
  * when a Controller receive a request from a view, the Controller
@@ -89,7 +91,7 @@ public class GameController implements GameListener {
     private void addTurn(){
         if(currentPlayer==PlayerColor.BLUE) turn++;
         turnLabel.setText("Turn: "+turn);
-        System.out.println(turn);
+        //System.out.println(turn);
     }
 
     //win有两种，一种是走到兽穴，一种是对方棋子无路可走
@@ -174,7 +176,11 @@ public class GameController implements GameListener {
         model.initPieces();
         view.removeAllPieces();
         view.initiateChessComponent(model);
-        turn=1;
+        if(currentPlayer==PlayerColor.BLUE){
+            turn=0;
+        }else {
+            turn = 1;
+        }
         addTurn();
         currentPlayer=PlayerColor.RED;
         swapColor();
@@ -185,13 +191,15 @@ public class GameController implements GameListener {
 
     }
     public void unDo(){
-        if(steps.size()==0){
-            System.out.println("Can not undo");
+        if(steps.size()==0||winner!=null){
+            JOptionPane.showMessageDialog(view,"Can not undo!","Notice",JOptionPane.ERROR_MESSAGE);
         }else {
             Step s = steps.remove(steps.size() - 1);
-            // todo model
+            model.undo(s);
             view.undo(s);
             swapColor();
+            turn--;
+            addTurn();
             view.repaint();
         }
     }

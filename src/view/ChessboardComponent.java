@@ -186,17 +186,47 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
     public void undo(Step step){
         ChessboardPoint from=step.getFrom();
         ChessboardPoint to=step.getTo();
+        ChessPiece chess=step.getChess();
+        ChessPiece eaten=step.getEaten();
         /*
         把to的棋子拿走，出现在from里
         如果有棋子被吃了
             新建一个
          */
         removeChessComponentAtGrid(to);
+        switch (chess.getName()) {
+            case "Elephant" -> setChessComponentAtGrid(from, new ElephantChessComponent(chess.getOwner(), CHESS_SIZE));
+            case "Lion" -> setChessComponentAtGrid(from, new LionChessComponent(chess.getOwner(), CHESS_SIZE));
+            case "Tiger" -> setChessComponentAtGrid(from, new TigerChessComponent(chess.getOwner(), CHESS_SIZE));
+            case "Leopard" -> setChessComponentAtGrid(from, new LeopardChessComponent(chess.getOwner(), CHESS_SIZE));
+            case "Wolf" -> setChessComponentAtGrid(from, new WolfChessComponent(chess.getOwner(), CHESS_SIZE));
+            case "Dog" -> setChessComponentAtGrid(from, new DogChessComponent(chess.getOwner(), CHESS_SIZE));
+            case "Cat" -> setChessComponentAtGrid(from, new CatChessComponent(chess.getOwner(), CHESS_SIZE));
+            case "Rat" -> setChessComponentAtGrid(from, new RatChessComponent(chess.getOwner(), CHESS_SIZE));
+        }
+        if(eaten!=null){
+            switch (eaten.getName()) {
+                case "Elephant" -> setChessComponentAtGrid(to, new ElephantChessComponent(eaten.getOwner(), CHESS_SIZE));
+                case "Lion" -> setChessComponentAtGrid(to, new LionChessComponent(eaten.getOwner(), CHESS_SIZE));
+                case "Tiger" -> setChessComponentAtGrid(to, new TigerChessComponent(eaten.getOwner(), CHESS_SIZE));
+                case "Leopard" -> setChessComponentAtGrid(to, new LeopardChessComponent(eaten.getOwner(), CHESS_SIZE));
+                case "Wolf" -> setChessComponentAtGrid(to, new WolfChessComponent(eaten.getOwner(), CHESS_SIZE));
+                case "Dog" -> setChessComponentAtGrid(to, new DogChessComponent(eaten.getOwner(), CHESS_SIZE));
+                case "Cat" -> setChessComponentAtGrid(to, new CatChessComponent(eaten.getOwner(), CHESS_SIZE));
+                case "Rat" -> setChessComponentAtGrid(to, new RatChessComponent(eaten.getOwner(), CHESS_SIZE));
+            }
+        }
+
     }
     public void restoreChess(Step step){//复原棋子
         ChessboardPoint to=step.getTo();
         ChessPiece c=step.getChess();
         ChessboardPoint from=step.getFrom();
+        ChessPiece e=step.getEaten();
+        removeChessComponentAtGrid(from);
+        if(e!=null){
+            removeChessComponentAtGrid(to);
+        }
         switch (c.getName()) {
             case "Elephant" -> setChessComponentAtGrid(to, new ElephantChessComponent(c.getOwner(), CHESS_SIZE));
             case "Lion" -> setChessComponentAtGrid(to, new LionChessComponent(c.getOwner(), CHESS_SIZE));
@@ -207,7 +237,6 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
             case "Cat" -> setChessComponentAtGrid(to, new CatChessComponent(c.getOwner(), CHESS_SIZE));
             case "Rat" -> setChessComponentAtGrid(to, new RatChessComponent(c.getOwner(), CHESS_SIZE));
         }
-        removeChessComponentAtGrid(from);
     }
     //ok
     public void setChessComponentAtGrid(ChessboardPoint point, ChessComponent chess) {

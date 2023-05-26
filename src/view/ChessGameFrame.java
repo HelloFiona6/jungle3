@@ -1,11 +1,11 @@
 package view;
 
 import controller.GameController;
+import view.image.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * 这个类表示游戏过程中的整个游戏界面，是一切的载体
@@ -19,6 +19,10 @@ public class ChessGameFrame extends JFrame {
     private GameController gameController;
     private JLabel statusLabel;
     private JLabel turnLabel;
+    private int imageNumber=0;
+    private ImagePanel panel;
+    private JRootPane pane;
+    private ImageIcon back=new ImageIcon(getClass().getResource("/Background/picture1.jpg"));
 
     private ChessboardComponent chessboardComponent;
     public ChessGameFrame(int width, int height) {
@@ -32,6 +36,12 @@ public class ChessGameFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //设置程序关闭按键，如果点击右上方的叉就游戏全部关闭了
         setLayout(null);
 
+//        pane=new JRootPane(back);
+//        setRootPane(pane);
+        panel=new ImagePanel(back);
+        //getContentPane().add(panel);
+        setContentPane(panel);
+        panel.setLayout(null);
 
         addChessboard();
         addPlayerLabel();
@@ -40,6 +50,7 @@ public class ChessGameFrame extends JFrame {
         addSaveButton();
         addRestartButton();
         addUndoButton();
+        addThemeButton();
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -88,6 +99,7 @@ public class ChessGameFrame extends JFrame {
         statusLabel.setLocation(HEIGTH, HEIGTH / 10);
         statusLabel.setSize(300, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
+        statusLabel.setForeground(Color.WHITE);
         add(statusLabel);
     }
 
@@ -96,6 +108,7 @@ public class ChessGameFrame extends JFrame {
         turnLabel.setLocation(HEIGTH, HEIGTH / 7);
         turnLabel.setSize(300, 60);
         turnLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
+        turnLabel.setForeground(Color.WHITE);
         add(turnLabel);
     }
 
@@ -135,20 +148,20 @@ public class ChessGameFrame extends JFrame {
      */
     private void addLoadButton() {
         JButton button = new JButton("Load");
-        button.setLocation(HEIGTH, HEIGTH / 10 + 240);
+        button.setLocation(HEIGTH, HEIGTH / 10 + 280);
         button.setSize(200, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
 
         button.addActionListener(e -> {//点完弹出个面板
             System.out.println("Click load");
-            //String path = JOptionPane.showInputDialog(this,"Input Path here");
+
             gameController.loadGameFromFile();
         });
     }
     private void addSaveButton() {
         JButton button = new JButton("Save");
-        button.setLocation(HEIGTH, HEIGTH / 10 + 300);
+        button.setLocation(HEIGTH, HEIGTH / 10 + 360);
         button.setSize(200, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
@@ -162,7 +175,7 @@ public class ChessGameFrame extends JFrame {
 
     private void addUndoButton() {
         JButton button = new JButton("Undo");
-        button.setLocation(HEIGTH, HEIGTH / 10 + 360);
+        button.setLocation(HEIGTH, HEIGTH / 10 + 200);
         button.setSize(200, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
@@ -173,5 +186,26 @@ public class ChessGameFrame extends JFrame {
         });
     }
 
+    private void addThemeButton(){
+        JButton button = new JButton("Theme");
+        button.setLocation(HEIGTH, HEIGTH / 10 + 440);
+        button.setSize(200, 60);
+        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(button);
+        HashMap<Integer,String> pic=new HashMap<>();
+        pic.put(0,"/Background/picture1.jpg");
+        pic.put(1,"/Background/picture2.jpg");
+        pic.put(2,"/Background/picture3.jpg");
+        pic.put(3,"/Background/picture4.jpg");
+
+        button.addActionListener(e -> {
+            //换图片
+            imageNumber=(imageNumber+1)%4;
+            back=new ImageIcon(getClass().getResource(pic.get(imageNumber)));
+            panel.setBackgroundImage(back);
+
+
+        });
+    }
 
 }

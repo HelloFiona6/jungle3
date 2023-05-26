@@ -1,7 +1,9 @@
 package model;
 
 
-public abstract class ChessPiece {
+import java.io.Serializable;
+
+public abstract class ChessPiece implements Serializable {
     // the owner of the chess
     private PlayerColor owner;
     // Elephant? Cat? Dog? ...
@@ -40,9 +42,11 @@ public abstract class ChessPiece {
     }
 
     public void setRank(boolean x ) {
-        if(x==true) {
+        if(x) {
             rank=0;
         }
-
+    }
+    public void setRank(int x ) {
+        rank=x;
     }
 }
