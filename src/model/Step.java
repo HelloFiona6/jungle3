@@ -4,43 +4,45 @@ import java.io.Serializable;
 
 //如果撤销怎么办？
 public class Step implements Serializable {
-    private ChessPiece chess;
-    private ChessPiece eatenChess;
     private int turn;
     private PlayerColor owner;
     private ChessboardPoint from;
     private ChessboardPoint to;
+    private ChessPiece chess;
+    private ChessPiece eaten;
 
-    public Step(ChessboardPoint from,ChessboardPoint to,int turn,PlayerColor owner){
+    public Step(ChessboardPoint from,ChessboardPoint to,int turn,PlayerColor owner,ChessPiece chess,ChessPiece eaten){
         this.turn=turn;
         this.to=to;
         this.from=from;
-        this.owner=owner;;
+        this.owner=owner;
+        this.chess=chess;
+        this.eaten=eaten;
     }
-
 
     public int getTurn() {
         return turn;
-    }
-
-    public void setTurn(int turn) {
-        this.turn = turn;
     }
 
     public ChessPiece getChess() {
         return chess;
     }
 
+
+    public ChessPiece getEaten() {
+        return eaten;
+    }
+
+    public void setEaten(ChessPiece eaten) {
+        this.eaten = eaten;
+    }
+
     public void setChess(ChessPiece chess) {
         this.chess = chess;
     }
 
-    public ChessPiece getEatenChess() {
-        return eatenChess;
-    }
-
-    public void setEatenChess(ChessPiece eatenChess) {
-        this.eatenChess = eatenChess;
+    public void setTurn(int turn) {
+        this.turn = turn;
     }
 
     public PlayerColor getOwner() {
@@ -71,10 +73,10 @@ public class Step implements Serializable {
     public String toString() {
         String o;
         if(owner.equals(PlayerColor.BLUE)){
-            o="b";
+            o="0";
         }else{
-            o="r";
+            o="1";
         }
-        return String.valueOf(from)+to+o+String.format("%03d",turn);
+        return o+" "+from+" "+to+" "+turn;
     }
 }

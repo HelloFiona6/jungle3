@@ -3,6 +3,7 @@ package controller;
 
 import listener.GameListener;
 import model.*;
+import music.MusicPlayer;
 import view.ChessComponent;
 import view.CellComponent;
 import view.ChessboardComponent;
@@ -11,6 +12,8 @@ import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  * Controller is the connection between model and view,
@@ -89,7 +92,7 @@ public class GameController implements GameListener {
     private void addTurn(){
         if(currentPlayer==PlayerColor.BLUE) turn++;
         turnLabel.setText("Turn: "+turn);
-        System.out.println(turn);
+        //System.out.println(turn);
     }
 
     //win有两种，一种是走到兽穴，一种是对方棋子无路可走
@@ -107,6 +110,7 @@ public class GameController implements GameListener {
     public void onPlayerClickCell(ChessboardPoint point, CellComponent component) {
         if (selectedPoint != null && model.isValidMove(selectedPoint, point)) {//可以走
             recordMove(selectedPoint,point,getTurn(),currentPlayer);//记录怎么走
+            playMusic("/music/"+model.getChessPieceAt(selectedPoint).getName()+".wav");
             model.moveChessPiece(selectedPoint, point);//走
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
             System.out.println(steps);
@@ -121,7 +125,7 @@ public class GameController implements GameListener {
             addTurn();
             view.repaint();
 
-            // TODO: if the chess enter Dens or Traps and so on
+
         }
     }
     // click a cell with a chess
@@ -159,6 +163,11 @@ public class GameController implements GameListener {
             System.out.println("Illegal capture");
         }
     }
+    private void playMusic(String musicPath){
+        MusicPlayer musicPlayer=new MusicPlayer(getClass().getResource(musicPath),false);
+        Thread music=new Thread(musicPlayer);
+        music.start();
+    }
 
     //ok
     public void restartGame(){
@@ -174,7 +183,11 @@ public class GameController implements GameListener {
         model.initPieces();
         view.removeAllPieces();
         view.initiateChessComponent(model);
-        turn=1;
+        if(currentPlayer==PlayerColor.BLUE){
+            turn=0;
+        }else {
+            turn = 1;
+        }
         addTurn();
         currentPlayer=PlayerColor.RED;
         swapColor();
@@ -185,13 +198,15 @@ public class GameController implements GameListener {
 
     }
     public void unDo(){
-        if(steps.size()==0){
-            System.out.println("Can not undo");
+        if(steps.size()==0||winner!=null){
+            JOptionPane.showMessageDialog(view,"Can not undo!","Notice",JOptionPane.ERROR_MESSAGE);
         }else {
             Step s = steps.remove(steps.size() - 1);
-            // todo model
+            model.undo(s);
             view.undo(s);
             swapColor();
+            turn--;
+            addTurn();
             view.repaint();
         }
     }
@@ -229,6 +244,14 @@ public class GameController implements GameListener {
                 steps = stepList;
                 in.close();
                 fileIn.close();
+                currentPlayer=steps.get(steps.size() - 1).getOwner();
+                swapColor();
+                if(currentPlayer==PlayerColor.BLUE) {
+                    turn = steps.get(steps.size() - 1).getTurn() - 1;
+                }else{
+                    turn = steps.get(steps.size() - 1).getTurn();
+                }
+                addTurn();
                 view.repaint();
                 //todo
             } catch (IOException e) {

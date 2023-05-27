@@ -81,8 +81,12 @@ public class Chessboard {
     }
 
     //读取文件时候用
-    public void initPieces(List<String> lines) {
-
+    public void runStep(Step step) {
+        ChessboardPoint to=step.getTo();
+        ChessboardPoint from=step.getFrom();
+        ChessPiece chess=step.getChess();
+        setChessPiece(from,null);
+        setChessPiece(to,chess);
     }
 
     public void removeAllPiece() {
@@ -140,180 +144,190 @@ public class Chessboard {
     // public boolean isValidMove(ChessboardPoint target){
     // }
     //todo isValidMove 在Chesspiece里写了个抽象方法
+    public boolean acrossriver(ChessboardPoint src, ChessboardPoint dest) {
+        boolean t = true;
+        for (int i = Math.min(src.getRow(), dest.getRow()+row1(src,dest)); i < Math.max(src.getRow(), dest.getRow()); i++) {
+            for (int j = Math.min(src.getCol(), dest.getCol()+col1(src,dest)); j < Math.max(src.getCol(), dest.getCol()); j++) {
+                if ((i == 3 && j == 1) || (i == 3 && j == 2) || (i == 4 && j == 1) || (i == 4 && j == 2) || (i==5 && j == 1) || (i == 5 && j == 2) || (i == 3 && j == 4) || (i == 3 && j == 5) || (i == 4 && j == 4) || (i == 4 && j == 5) || (i == 5 && j == 4) || (i == 5 && j == 5)) {
+                    t = true;
+                } else {
+                    t = false;
+                }
+            }
+        }
+        return t;
+    }
 
+
+    public boolean acrossallriver(ChessboardPoint src, ChessboardPoint dest) {
+        boolean t = true;
+        for (int i = Math.min(src.getRow(), dest.getRow()+row1(src,dest)) ; i < Math.max(src.getRow(), dest.getRow()); i++) {
+            for (int j = Math.min(src.getCol(), dest.getCol()+col1(src,dest)); j < Math.max(src.getCol(), dest.getCol()); j++) {
+                if (((i == 3 && j == 1) && (i == 3 && j == 2)) || ((i == 4 && j == 1) && (i == 4 && j == 2)) || ((i == 5 && j == 1) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 3 && j == 5)) || ((i == 4 && j == 4) && (i == 4 && j == 5)) || ((i == 5 && j == 4) && (i == 5 && j == 5)) || ((i == 3 && j == 1) && (i == 4 && j == 1) && (i == 5 && j == 1)) || ((i == 3 && j == 2) && (i == 4 && j == 2) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 4 && j == 4) && ((i == 5 && j == 4)) || ((i == 3 && j == 5)) && (i == 4 && j == 5) && (i == 5 && j == 5))) {
+                    t = true;
+                } else {
+                    t = false;
+                }
+            }
+        }
+        return t;
+    }
+
+    public boolean aroundriver(ChessboardPoint src, ChessboardPoint dest) {
+        boolean t = true;
+        for (int i = Math.min(src.getRow(), dest.getRow()+row1(src,dest)); i < Math.max(src.getRow(), dest.getRow()); i++) {
+            for (int j = Math.min(src.getCol(), dest.getCol()+col1(src,dest)); j < Math.max(src.getCol(), dest.getCol()); j++) {
+                if ( (i == 3  && j == 0) ||(i == 2  && j == 1) ||(i == 2  && j == 0)  || (i == 3 && j == 3) ||(i == 2 && j == 2) ||(i == 2&& j == 3) ||(i == 4 && j == 0) ||(i == 5&& j == 1) ||(i == 5 && j == 0) ||(i == 6 && j == 1) ||(i == 6 && j == 0) || (i == 4 && j == 3)  ||(i == 5 && j == 3) ||(i == 6 && j == 2) ||(i == 6 && j == 3) || (i == 6 && j == 4) ||  (i == 2 && j == 4) || (i == 3 && j == 6) ||(i == 2 && j == 5) ||(i == 2 && j == 6) || (i == 4 && j == 6) ||     (i == 5 && j == 6)||   (i == 6 && j == 5)||   (i == 6 && j == 6)) {
+                    t = true;
+                } else {
+                    t = false;
+                }
+            }
+        }
+        return t;
+    }
+
+    public boolean ratinriver(ChessboardPoint src, ChessboardPoint dest) {
+        boolean t = true;
+        for (int i = Math.min(src.getRow(), dest.getRow()+row1(src,dest)) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
+            for (int j = Math.min(src.getCol(), dest.getCol()+col1(src,dest)); j < Math.max(src.getCol(), dest.getCol()); j++) {
+                if (!grid[i][j].getPiece().getName().equals("Rat")) {
+                    t = true;
+                } else {
+                    t = false;
+                }
+            }
+        }
+        return t;
+    }
+    public int row1(ChessboardPoint src, ChessboardPoint dest){
+        int row1=0;
+        if(src.getRow()!= dest.getRow()&&src.getCol()==dest.getCol()){
+            row1=1;
+        }else{
+            row1=0;
+        }
+        return row1;
+    }
+
+    public int col1(ChessboardPoint src, ChessboardPoint dest){
+        int col1=0;
+        if(src.getRow()== dest.getRow()&&src.getCol()!=dest.getCol()){
+            col1=1;
+        }else{
+            col1=0;
+        }
+        return col1;
+    }
+    // public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
+    //    if (getChessPieceAt(src) == null || getChessPieceAt(dest) != null) {
+    //        return false;
+    ///    }//确保src有棋子，dest无棋子
+    //    return specialMove(src,dest) && densMove(src,dest);
+    // }
     public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
         ChessPiece piecesrc = getChessPieceAt(src);
         ChessPiece piecedest = getChessPieceAt(dest);
         boolean canmove = false;
-        if (piecesrc == null) {
+        if (piecesrc == null || piecedest != null) {
             canmove = false;
         }
         if ((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8) {
             canmove = false;
         }
         if (piecesrc != null && piecedest == null) {
-            boolean acrossriver = false;
-            boolean ratinriver = false;
-            boolean acrossallriver = false;
             boolean t = true;
-            for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
-                for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
-                    if ((i == 3 && j == 1) || (i == 3 && j == 2) || (i == 4 && j == 1) || (i == 4 && j == 2) || (5 == 3 && j == 1) || (i == 5 && j == 2) || (i == 3 && j == 4) || (i == 3 && j == 5) || (i == 4 && j == 4) || (i == 4 && j == 5) || (i == 5 && j == 4) || (i == 5 && j == 5)) {
-                        acrossriver = true;
-                    } else {
-                        acrossriver = false;
-                    }
-                }
-            }
-            for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
-                for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
-                    if (((i == 3 && j == 1) && (i == 3 && j == 2)) || ((i == 4 && j == 1) && (i == 4 && j == 2)) || ((i == 5 && j == 1) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 3 && j == 5)) || ((i == 4 && j == 4) && (i == 4 && j == 5)) || ((i == 5 && j == 4) && (i == 5 && j == 5)) || ((i == 3 && j == 1) && (i == 4 && j == 1) && (i == 5 && j == 1)) || ((i == 3 && j == 2) && (i == 4 && j == 2) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 4 && j == 4) && ((i == 5 && j == 4)) || ((i == 3 && j == 5)) && (i == 4 && j == 5) && (i == 5 && j == 5))) {
-                        acrossallriver = true;
-                    } else {
-                        acrossallriver = false;
-                    }
-                }
-            }
-            for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
-                for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
-                    if (grid[i][j].getPiece().getName() != "Rat") {
-                        ratinriver = true;
-                    } else {
-                        ratinriver = false;
-                    }
-                }
-            }
-
             if (calculateDistance(src, dest) == 1) {
-                if (piecesrc.getName() == "Rat") {
+                if (piecesrc.getName().equals("Rat")) {
                     canmove = true;
                 } else {
-                    if (acrossriver == false) {
+                    if (acrossriver(src, dest) == false) {
                         canmove = true;
                     } else {
                         canmove = false;
                     }
                 }
-            } else if (calculateDistance(src, dest) == 3 || calculateDistance(src, dest) == 5) {
-                if (piecesrc.getName() != "Lion" && piecesrc.getName() != "Tiger") {
+            } else if (calculateDistance(src, dest) == 3 || calculateDistance(src, dest) ==4 ) {
+                if (!piecesrc.getName().equals("Lion") || !piecesrc.getName().equals("Tiger")) {
                     canmove = false;
                 } else {
-                    if (ratinriver == true) {
+                    if (ratinriver(src, dest) == true) {
                         canmove = false;
                     } else {
-                        canmove = true;
+                        if (aroundriver(src, dest) == true) {
+                            canmove = true;
+                        } else {
+                            canmove = false;
+                        }
                     }
+                }
+            }else{
+                canmove =false;
+            }
+        }
+        return canmove;
+    }
+    public ChessPiece getChessPieceAt(ChessboardPoint point){
+        return getGridAt(point).getPiece();
+    }
+    public boolean isValidMove(ChessPiece chess,ChessboardPoint point){
+        int[] x={1,0,-1,0};
+        int[] y={0,-1,0,1};
+        for (int i = 0; i < 4; i++) {
+            ChessboardPoint to=new ChessboardPoint(point.getRow()+x[i],point.getCol()+y[i]);
+            if(isValidMove(point,to)) return true;
+        }
+        return  false;
+    }
+
+
+    public boolean checkWin(PlayerColor currentPlayer){
+        //看周围是不是包满了棋子——还能不能走
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 9; j++) {
+                ChessboardPoint point=new ChessboardPoint(j,i);
+                if(getChessPieceAt(point)!=null) {
+                    if (isValidMove(getChessPieceAt(point), point)) return false;
                 }
             }
         }
-        if (piecesrc != null && piecedest != null) {
-            // canmove =false;
-            canmove = isValidCapture(src, dest);
-        }
-        return canmove;
-
-    }
-
-    private ChessPiece getChessPieceAt(ChessboardPoint point) {
-        return getGridAt(point).getPiece();
+        return true;
     }
 
 
     public boolean isValidCapture(ChessboardPoint src, ChessboardPoint dest) {
         // TODO:Fix this method
-        // return isValidMove(src, dest);
-
         ChessPiece piecesrc = getChessPieceAt(src);
         ChessPiece piecedest = getChessPieceAt(dest);
-        boolean acrossriver = true;
-        boolean ratinriver = true;
-        boolean acrossallriver = true;
         boolean t = true;
-        for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
-            for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
-                if ((i == 3 && j == 1) || (i == 3 && j == 2) || (i == 4 && j == 1) || (i == 4 && j == 2) || (5 == 3 && j == 1) || (i == 5 && j == 2) || (i == 3 && j == 4) || (i == 3 && j == 5) || (i == 4 && j == 4) || (i == 4 && j == 5) || (i == 5 && j == 4) || (i == 5 && j == 5)) {
-                    acrossriver = true;
-                } else {
-                    acrossriver = false;
-                }
-            }
+        if (piecesrc == null ) {
+            t = false;
         }
-
-        for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
-            for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
-                if (((i == 3 && j == 1) && (i == 3 && j == 2)) || ((i == 4 && j == 1) && (i == 4 && j == 2)) || ((i == 5 && j == 1) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 3 && j == 5)) || ((i == 4 && j == 4) && (i == 4 && j == 5)) || ((i == 5 && j == 4) && (i == 5 && j == 5)) || ((i == 3 && j == 1) && (i == 4 && j == 1) && (i == 5 && j == 1)) || ((i == 3 && j == 2) && (i == 4 && j == 2) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 4 && j == 4) && ((i == 5 && j == 4)) || ((i == 3 && j == 5)) && (i == 4 && j == 5) && (i == 5 && j == 5))) {
-                    acrossallriver = true;
-                } else {
-                    acrossallriver = false;
-                }
-            }
-        }
-
-        for (int i = Math.min(src.getRow(), dest.getRow()) + 1; i < Math.max(src.getRow(), dest.getRow()); i++) {
-            for (int j = Math.min(src.getCol(), dest.getCol()); j < Math.max(src.getCol(), dest.getCol()); j++) {
-                if (grid[i][j] != null) {
-                    ratinriver = true;
-                } else {
-                    ratinriver = false;
-                }
-            }
-        }
-
-        if (((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8)||src==null) {
+        if (((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8) || src == null) {
             return false;
         } else {
-          /*  if (src == null) {
-                t = false;
-            }
-
-            if (src != null && dest == null) {
-                if (calculateDistance(src, dest) == 1) {
-                    if (piecesrc.getName() == "Rat") {
-                        t = true;
-                    } else {
-                        if (acrossriver == false) {
-                            t = true;
-                        } else {
-                            t = false;
-                        }
-                    }
-                } else
-                 if (calculateDistance(src, dest) == 3 || calculateDistance(src, dest) == 5) {
-
-                    if (piecesrc.getName() != "Lion" && piecesrc.getName() != "Tiger") {
-                        t = false;
-                    } else {
-                        if (ratinriver == true) {
-                            t = false;
-                        } else {
-                            t = true;
-                        }
-                    }
-                }
-            }
-*/
             if (piecesrc != null && piecedest != null) {
-                if (piecedest.canCapture(piecedest) == false) {
+                if (piecesrc.canCapture(piecedest) == false) {
                     t = false;
                 } else {
                     if (calculateDistance(src, dest) == 1) {
-                        if (piecesrc.getName() == "Rat") {
+                        if (piecesrc.getName().equals("Rat")&&piecedest.getName().equals("Elephant")&&ratinriver(src,dest)!=true) {
                             t = true;
                         } else {
-                            if (acrossriver == false) {
+                            if (acrossriver(src, dest) == false) {
                                 t = true;
                             } else {
                                 t = false;
                             }
                         }
                     } else if (calculateDistance(src, dest) == 3 || calculateDistance(src, dest) == 5) {
-                        if (piecesrc.getName() != "Lion" && piecesrc.getName() != "Tiger") {
+                        if (!piecesrc.getName().equals("Lion" )&& !piecesrc.getName().equals("Tiger")) {
                             t = false;
                         } else {
-                            if (ratinriver == true) {
+                            if (ratinriver(src, dest) == true) {
                                 t = false;
                             } else {
-                                if (acrossallriver == true) {
+                                if (acrossallriver(src, dest) == true&&aroundriver(src,dest)==true) {
                                     t = true;
                                 } else {
                                     t = false;
@@ -324,21 +338,20 @@ public class Chessboard {
                     } else {
                         t = false;
                     }
-
                 }
-                //Todo
-                if(piecesrc!=null&&piecedest==null){
-                    t=isValidMove(src,dest);
-                }
+            }
+            //Todo
+            if (piecesrc != null && piecedest == null) {
+                t = isValidMove(src, dest);
             }
         }
         return t;
 
     }
 
-    public void TrapIsZero(ChessboardPoint point) {
-        for (ChessboardPoint p : trap) {
-            if (p.equals(point)) {
+    public void  Trapiszero(ChessboardPoint point ){
+        for(ChessboardPoint p:trap){
+            if(p.equals(point)){
                 //ChessPiece inTrap=new
                 ChessPiece animalintrap = getChessPieceAt(point);
                 animalintrap.setRank(true);
@@ -346,29 +359,58 @@ public class Chessboard {
         }
 
     }
-
-    public boolean inDens(ChessboardPoint point) {
-        for (ChessboardPoint p : dens) {
-            if (p.equals(point)) return true;
+    public boolean inDens(ChessboardPoint point){
+        for(ChessboardPoint p:dens){
+            if(p.equals(point)) return true;
         }
         return false;
     }
+    public void inTrap(ChessboardPoint point) {//进入陷阱变为0 point为陷阱的坐标
+        getGridAt(point).getPiece().setRank(true);
+    }
+    public void outTrap(ChessboardPoint point){//point 为陷阱
+        int rank = switch (getGridAt(point).getPiece().getName()) {
+            case "Rat" -> 1;
+            case "Cat" -> 2;
+            case "Dog" -> 3;
+            case "Wolf" -> 4;
+            case "Leopard" -> 5;
+            case "Tiger" -> 6;
+            case "Lion" -> 7;
+            case "Elephant" -> 8;
+            default -> 0;
+        };
+        getGridAt(point).getPiece().setRank(rank);
+    }
+    public void trap(ChessboardPoint point,ChessboardPoint selectedPoint){
+        for(ChessboardPoint c:trap){
+            //如果走到陷阱里
+            if(c==point && getGridAt(point).getOwner()!=getChessPieceOwner(selectedPoint)) {
+                inTrap(point);
+                System.out.println(getChessPieceAt(point).getRank());
 
-    public boolean inTrap() {
-        if (grid[0][2] == null && grid[0][4] == null && grid[1][3] == null && grid[8][2] == null && grid[8][4] == null && grid[7][3] == null) {
-            return false;
-        } else {
-        /*    if (grid[0][3].getPiece().getOwner()==PlayerColor.RED&&grid[8][3]==null){
-                tfinDens = true;
+                //走出陷阱
+            }else if(c==selectedPoint && getGridAt(selectedPoint).getOwner()!=getChessPieceOwner(point)){
+                outTrap(point);
+                System.out.println(getChessPieceAt(point).getRank());
             }
-            if (grid[8][3].getPiece().getOwner()==PlayerColor.BLUE&&grid[0][3]==null){
-                tfinDens =true;
-            }
-            if(grid[8][3]!=null&&grid[0][3]!=null){
-                tfinDens = true;
-            }
-        }*/
-            return true;
         }
     }
+
+    public void undo(Step step){
+        /*
+        to的子删掉，放到from
+        恢复吃的子ChessPiece
+         */
+        ChessPiece chess=step.getChess();
+        ChessPiece eaten=step.getEaten();
+        ChessboardPoint from=step.getFrom();
+        ChessboardPoint to=step.getTo();
+        removeChessPiece(to);
+        setChessPiece(from,chess);
+        if(eaten!=null){
+            setChessPiece(to,eaten);
+        }
+    }
+
 }
