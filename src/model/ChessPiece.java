@@ -17,13 +17,21 @@ public abstract class ChessPiece implements Serializable {
     public boolean canCapture(ChessPiece target) {
         // TODO Finish this method! **finish
         //if(Chessboard.isValidMove(this.name,target))
-        if(rank>= target.rank&&rank!=8){
-            return true;
-        }else if(rank==8&&target.rank!=1) {
-            return true;
-        }else{
+        if(target.getOwner().equals(owner)){
             return false;
         }
+        if (rank >= target.rank && rank != 8) {
+            return true;
+        } else if (rank == 8 && target.rank != 1) {
+            return true;
+        } else if (rank == 1 && target.rank == 8 ) {
+            return false;
+        } else {
+            return false;
+        }
+    }
+    public  boolean ratinriver(){
+        return  false;//没做完
     }
 
    // public abstract boolean isValidMove(ChessboardPoint target);
