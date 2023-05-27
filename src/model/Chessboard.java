@@ -4,7 +4,6 @@ import model.ChessPieces.*;
 import view.ChessComponent;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -163,7 +162,9 @@ public class Chessboard {
         boolean t = true;
         for (int i = Math.min(src.getRow(), dest.getRow()+row1(src,dest)) ; i < Math.max(src.getRow(), dest.getRow()); i++) {
             for (int j = Math.min(src.getCol(), dest.getCol()+col1(src,dest)); j < Math.max(src.getCol(), dest.getCol()); j++) {
-                if (((i == 3 && j == 1) && (i == 3 && j == 2)) || ((i == 4 && j == 1) && (i == 4 && j == 2)) || ((i == 5 && j == 1) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 3 && j == 5)) || ((i == 4 && j == 4) && (i == 4 && j == 5)) || ((i == 5 && j == 4) && (i == 5 && j == 5)) || ((i == 3 && j == 1) && (i == 4 && j == 1) && (i == 5 && j == 1)) || ((i == 3 && j == 2) && (i == 4 && j == 2) && (i == 5 && j == 2)) || ((i == 3 && j == 4) && (i == 4 && j == 4) && ((i == 5 && j == 4)) || ((i == 3 && j == 5)) && (i == 4 && j == 5) && (i == 5 && j == 5))) {
+                if (((i == 3 && j == 1) || (i == 3 && j == 2)) || ((i == 4 && j == 1) || (i == 4 && j == 2)) || ((i == 5 && j == 1)
+                        || (i == 5 && j == 2)) || ((i == 3 && j == 4) ||(i == 3 && j == 5)) || ((i == 4 && j == 4) || (i == 4 && j == 5))
+                        || ((i == 5 && j == 4) || (i == 5 && j == 5))  || (i == 4 && j == 4) && ((i == 5 && j == 4)) || ((i == 3 && j == 5)) && (i == 4 && j == 5) && (i == 5 && j == 5)) {
                     t = true;
                 } else {
                     t = false;
@@ -201,23 +202,38 @@ public class Chessboard {
         return t;
     }
     public int row1(ChessboardPoint src, ChessboardPoint dest){
-        int row1=0;
-        if(src.getRow()!= dest.getRow()&&src.getCol()==dest.getCol()){
-            row1=1;
+        int srcR=src.getRow();
+        int srcC=src.getCol();
+        int destC=dest.getCol();
+        int destR=dest.getRow();
+        if( srcC==destC && srcR<destR) {
+            return 1;//在一条竖直线上且向下跳
+        }else if(srcC==destC && srcR>destR){
+            return -1;
         }else{
-            row1=0;
+            return 0;
         }
-        return row1;
     }
 
     public int col1(ChessboardPoint src, ChessboardPoint dest){
-        int col1=0;
-        if(src.getRow()== dest.getRow()&&src.getCol()!=dest.getCol()){
-            col1=1;
+        int srcR=src.getRow();
+        int srcC=src.getCol();
+        int destC=dest.getCol();
+        int destR=dest.getRow();
+        if(srcC==destC && destR>srcR) {
+            return 1;//在一条水平线上
+        }else if(srcC==destC && destR<srcR){
+            return -1;
         }else{
-            col1=0;
+            return 0;
         }
-        return col1;
+//        int col1;
+//        if(src.getRow()== dest.getRow()&&src.getCol()!=dest.getCol()){
+//            col1=1;//在一条水平线上
+//        }else{
+//            col1=0;
+//        }
+//        return col1;
     }
     // public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
     //    if (getChessPieceAt(src) == null || getChessPieceAt(dest) != null) {
@@ -228,44 +244,89 @@ public class Chessboard {
     public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
         ChessPiece piecesrc = getChessPieceAt(src);
         ChessPiece piecedest = getChessPieceAt(dest);
-        boolean canmove = false;
+        int distance=calculateDistance(src, dest);
+//        boolean canmove = false;
+
+        //排除不成立选项，剩下来的情况只有向空白处能不能移动
         if (piecesrc == null || piecedest != null) {
-            canmove = false;
+            return false;
         }
-        if ((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8) {
-            canmove = false;
+        //如果是河，且是老鼠，间距==1 return true
+        if(river.contains(dest)){
+            if(!piecesrc.getName().equals("Rat")) return false;
+            if (distance == 1) return true;
         }
-        if (piecesrc != null && piecedest == null) {
-            boolean t = true;
-            if (calculateDistance(src, dest) == 1) {
-                if (piecesrc.getName().equals("Rat")) {
-                    canmove = true;
-                } else {
-                    if (acrossriver(src, dest) == false) {
-                        canmove = true;
-                    } else {
-                        canmove = false;
-                    }
-                }
-            } else if (calculateDistance(src, dest) == 3 || calculateDistance(src, dest) ==4 ) {
-                if (!piecesrc.getName().equals("Lion") || !piecesrc.getName().equals("Tiger")) {
-                    canmove = false;
-                } else {
-                    if (ratinriver(src, dest) == true) {
-                        canmove = false;
-                    } else {
-                        if (aroundriver(src, dest) == true) {
-                            canmove = true;
-                        } else {
-                            canmove = false;
-                        }
-                    }
-                }
-            }else{
-                canmove =false;
+        //狮子老虎可以跳河
+        /*
+        必须是同一行列的格子，且中间只能有河
+        上面有老鼠就不能跳
+        对面有棋子不能挑（上面已经排除了）
+         */
+        if(distance>1 && (piecesrc.getName().equals("Lion") || piecesrc.getName().equals("Tiger"))){
+            if(row1(src,dest)==0||col1(src,dest)==0) return false;
+
+            for (int i = 1; i < 4; i++) {
+                int temp=src.getRow()+row1(src,dest)*i;
+                ChessboardPoint c=new ChessboardPoint(temp,src.getCol());
+                if(!river.contains(c)) return false;
+                if(getChessPieceAt(c)!=null) return false;
             }
+            for (int i = 1; i < 3; i++) {
+                int temp=src.getCol()+col1(src,dest)*i;
+                ChessboardPoint c=new ChessboardPoint(src.getRow(),temp);
+                if(!river.contains(c)) return false;
+                if(getChessPieceAt(c)!=null) return false;
+            }
+//            if(col1(src,dest)==1) {
+//                for (int i = 0; i <3; i++) {
+//                    if(!river.contains(new ChessboardPoint(src.getRow(),src.getCol()+i))){
+//                        return false;
+//                    }
+//                }
+//            } else if (col1(src,dest)==-1) {
+//                for (int i = 0; i <3; i++) {
+//                    if(!river.contains(new ChessboardPoint(src.getRow(),src.getCol()-i))){
+//                        return false;
+//                    }
+//                }
+//            }
+            }
+        //不能走到自己的dens里
+        if(getChessPieceAt(src).getOwner().equals(getGridAt(dest).getOwner()) && dens.contains(dest)){
+            return false;
         }
-        return canmove;
+        return distance==1;
+//        if ((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8) {
+//            canmove = false;
+//        }
+//            boolean t = true;
+//            if (calculateDistance(src, dest) == 1) {
+//                if (piecesrc.getName().equals("Rat")) {
+//                    canmove = true;
+//                } else {
+//                    if (acrossriver(src, dest) == false) {
+//                        canmove = true;
+//                    } else {
+//                        canmove = false;
+//                    }
+//                }
+//            } else if (calculateDistance(src, dest) == 3 || calculateDistance(src, dest) ==4 ) {
+//                if (!piecesrc.getName().equals("Lion") || !piecesrc.getName().equals("Tiger")) {
+//                    canmove = false;
+//                } else {
+//                    if (ratinriver(src, dest) == true) {
+//                        canmove = false;
+//                    } else {
+//                        if (aroundriver(src, dest) == true) {
+//                            canmove = true;
+//                        } else {
+//                            canmove = false;
+//                        }
+//                    }
+//                }
+//            }else{
+//                canmove =false;
+//            }
     }
     public ChessPiece getChessPieceAt(ChessboardPoint point){
         return getGridAt(point).getPiece();
