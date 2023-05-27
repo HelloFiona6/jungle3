@@ -2,6 +2,7 @@ package view;
 
 import controller.GameController;
 import model.Chessboard;
+import music.MusicPlayer;
 import view.image.ImagePanel;
 
 import javax.swing.*;
@@ -44,6 +45,7 @@ public class StartFrame extends JFrame {
         JButton button = new JButton("Multiplayer Game");
         button.addActionListener((e) -> //触发的事件
         {
+            playMusic("/music/button.wav");
             startGame();
         });
         button.setLocation(WIDTH/2-125, HEIGHT / 2);
@@ -55,6 +57,7 @@ public class StartFrame extends JFrame {
         JButton button = new JButton("Single Player Game");
         button.addActionListener((e) -> //触发的事件
         {
+            playMusic("/music/button.wav");
             startGame();
         });
         button.setLocation(WIDTH/2-125, HEIGHT / 2+80);
@@ -76,10 +79,16 @@ public class StartFrame extends JFrame {
         setContentPane(startPanel);
         startPanel.setLayout(null);
     }
+    private void playMusic(String musicPath){
+        MusicPlayer musicPlayer=new MusicPlayer(getClass().getResource(musicPath),false);
+        Thread music=new Thread(musicPlayer);
+        music.start();
+    }
 
     private void addRuleButton(){
         JButton rule=new JButton("Rules");
         rule.addActionListener((e)->{
+            playMusic("/music/button.wav");
             JOptionPane.showMessageDialog(null, """
                      Introduction:\s
                     Jungle or Dou Shou Qi (斗兽棋), is a modern Chinese board game with an obscure history, as shown in the Figure 1.\s

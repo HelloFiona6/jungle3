@@ -237,6 +237,7 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
             case "Cat" -> setChessComponentAtGrid(to, new CatChessComponent(c.getOwner(), CHESS_SIZE));
             case "Rat" -> setChessComponentAtGrid(to, new RatChessComponent(c.getOwner(), CHESS_SIZE));
         }
+
     }
     //ok
     public void setChessComponentAtGrid(ChessboardPoint point, ChessComponent chess) {

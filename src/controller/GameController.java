@@ -3,6 +3,7 @@ package controller;
 
 import listener.GameListener;
 import model.*;
+import music.MusicPlayer;
 import view.ChessComponent;
 import view.CellComponent;
 import view.ChessboardComponent;
@@ -109,6 +110,7 @@ public class GameController implements GameListener {
     public void onPlayerClickCell(ChessboardPoint point, CellComponent component) {
         if (selectedPoint != null && model.isValidMove(selectedPoint, point)) {//可以走
             recordMove(selectedPoint,point,getTurn(),currentPlayer);//记录怎么走
+            playMusic("/music/"+model.getChessPieceAt(selectedPoint).getName()+".wav");
             model.moveChessPiece(selectedPoint, point);//走
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
             System.out.println(steps);
@@ -123,7 +125,7 @@ public class GameController implements GameListener {
             addTurn();
             view.repaint();
 
-            // TODO: if the chess enter Dens or Traps and so on
+
         }
     }
     // click a cell with a chess
@@ -160,6 +162,11 @@ public class GameController implements GameListener {
         }else{
             System.out.println("Illegal capture");
         }
+    }
+    private void playMusic(String musicPath){
+        MusicPlayer musicPlayer=new MusicPlayer(getClass().getResource(musicPath),false);
+        Thread music=new Thread(musicPlayer);
+        music.start();
     }
 
     //ok
@@ -237,6 +244,14 @@ public class GameController implements GameListener {
                 steps = stepList;
                 in.close();
                 fileIn.close();
+                currentPlayer=steps.get(steps.size() - 1).getOwner();
+                swapColor();
+                if(currentPlayer==PlayerColor.BLUE) {
+                    turn = steps.get(steps.size() - 1).getTurn() - 1;
+                }else{
+                    turn = steps.get(steps.size() - 1).getTurn();
+                }
+                addTurn();
                 view.repaint();
                 //todo
             } catch (IOException e) {

@@ -1,10 +1,12 @@
 package view;
 
 import controller.GameController;
+import music.MusicPlayer;
 import view.image.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 import java.util.HashMap;
 
 /**
@@ -36,13 +38,12 @@ public class ChessGameFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //设置程序关闭按键，如果点击右上方的叉就游戏全部关闭了
         setLayout(null);
 
-//        pane=new JRootPane(back);
-//        setRootPane(pane);
+        //background
         panel=new ImagePanel(back);
-        //getContentPane().add(panel);
         setContentPane(panel);
         panel.setLayout(null);
 
+        //各种按钮
         addChessboard();
         addPlayerLabel();
         addTurnLabel();
@@ -51,6 +52,8 @@ public class ChessGameFrame extends JFrame {
         addRestartButton();
         addUndoButton();
         addThemeButton();
+        //addStopMusicButton();
+
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -130,7 +133,7 @@ public class ChessGameFrame extends JFrame {
         JButton button = new JButton("Restart");
         button.addActionListener((e) -> //触发的事件
         {
-            //JOptionPane.showMessageDialog(this, "Hello, world!");
+            playMusic("/music/button.wav");
             gameController.restartGame();//点完重新加载游戏
         });
         button.setLocation(HEIGTH, HEIGTH / 10 + 120);
@@ -146,6 +149,11 @@ public class ChessGameFrame extends JFrame {
      * view 重新add棋子
      * view.repaint()
      */
+    private void playMusic(String musicPath){
+        MusicPlayer musicPlayer=new MusicPlayer(getClass().getResource(musicPath),false);
+        Thread music=new Thread(musicPlayer);
+        music.start();
+    }
     private void addLoadButton() {
         JButton button = new JButton("Load");
         button.setLocation(HEIGTH, HEIGTH / 10 + 280);
@@ -154,8 +162,8 @@ public class ChessGameFrame extends JFrame {
         add(button);
 
         button.addActionListener(e -> {//点完弹出个面板
+            playMusic("/music/button.wav");
             System.out.println("Click load");
-
             gameController.loadGameFromFile();
         });
     }
@@ -167,8 +175,8 @@ public class ChessGameFrame extends JFrame {
         add(button);
 
         button.addActionListener(e -> {//点完弹出个面板
+            playMusic("/music/button.wav");
             System.out.println("Click save");
-            //String path = JOptionPane.showInputDialog(this,"Input Path here");
             gameController.saveGameToFile();
         });
     }
@@ -181,6 +189,7 @@ public class ChessGameFrame extends JFrame {
         add(button);
 
         button.addActionListener(e -> {//点完弹出个面板
+            playMusic("/music/button.wav");
             System.out.println("Click uodo");
             gameController.unDo();
         });
@@ -200,6 +209,7 @@ public class ChessGameFrame extends JFrame {
 
         button.addActionListener(e -> {
             //换图片
+            playMusic("/music/button.wav");
             imageNumber=(imageNumber+1)%4;
             back=new ImageIcon(getClass().getResource(pic.get(imageNumber)));
             panel.setBackgroundImage(back);
@@ -207,5 +217,18 @@ public class ChessGameFrame extends JFrame {
 
         });
     }
+
+//    private void addStopMusicButton(){
+//        JButton button = new JButton("Stop Music");
+//        button.setLocation(HEIGTH, HEIGTH / 10 + 520);
+//        button.setSize(200, 60);
+//        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+//        add(button);
+//        button.addActionListener(e -> {
+//            //暂停背景音乐播放
+//
+//
+//        });
+//    }
 
 }
