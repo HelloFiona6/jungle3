@@ -7,6 +7,15 @@ import java.io.Serializable;
 public class Cell implements Serializable {
     // the position for chess
     private ChessPiece piece;
+    private PlayerColor owner;
+
+    public PlayerColor getOwner() {
+        return owner;
+    }
+
+    public void setOwner(PlayerColor owner) {
+        this.owner = owner;
+    }
 
 
     public ChessPiece getPiece() {
