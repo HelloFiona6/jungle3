@@ -25,7 +25,7 @@ public abstract class ChessPiece implements Serializable {
         } else if (rank == 8 && target.rank != 1) {
             return true;
         } else if (rank == 1 && target.rank == 8 ) {
-            return false;
+            return true;
         } else {
             return false;
         }

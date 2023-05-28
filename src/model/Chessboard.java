@@ -126,10 +126,13 @@ public class Chessboard {
     }
 
     public void captureChessPiece(ChessboardPoint src, ChessboardPoint dest) {
-        if (isValidCapture(src, dest)) {
+        if (!isValidCapture(src, dest)) {
             throw new IllegalArgumentException("Illegal chess capture!");
+        }else {
+            removeChessPiece(dest);
+            setChessPiece(dest, getChessPieceAt(src));
+            removeChessPiece(src);
         }
-        // TODO: Finish the method.
     }
 
     public Cell[][] getGrid() {
@@ -260,7 +263,6 @@ public class Chessboard {
         /*
         必须是同一行列的格子，且中间只能有河
         上面有老鼠就不能跳
-        对面有棋子不能挑（上面已经排除了）
          */
         if(distance>1 && (piecesrc.getName().equals("Lion") || piecesrc.getName().equals("Tiger"))){
             if(row1(src,dest)==0||col1(src,dest)==0) return false;
@@ -331,7 +333,7 @@ public class Chessboard {
     public ChessPiece getChessPieceAt(ChessboardPoint point){
         return getGridAt(point).getPiece();
     }
-    public boolean isValidMove(ChessPiece chess,ChessboardPoint point){
+    public boolean isValidMove(ChessboardPoint point){
         int[] x={1,0,-1,0};
         int[] y={0,-1,0,1};
         for (int i = 0; i < 4; i++) {
@@ -348,7 +350,7 @@ public class Chessboard {
             for (int j = 0; j < 9; j++) {
                 ChessboardPoint point=new ChessboardPoint(j,i);
                 if(getChessPieceAt(point)!=null) {
-                    if (isValidMove(getChessPieceAt(point), point)) return false;
+                    if (isValidMove(point)) return false;
                 }
             }
         }
@@ -360,54 +362,91 @@ public class Chessboard {
         // TODO:Fix this method
         ChessPiece piecesrc = getChessPieceAt(src);
         ChessPiece piecedest = getChessPieceAt(dest);
-        boolean t = true;
-        if (piecesrc == null ) {
-            t = false;
-        }
-        if (((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8) || src == null) {
+        int distance=calculateDistance(src,dest);
+        if(piecesrc==null||piecedest==null){
             return false;
-        } else {
-            if (piecesrc != null && piecedest != null) {
-                if (piecesrc.canCapture(piecedest) == false) {
-                    t = false;
-                } else {
-                    if (calculateDistance(src, dest) == 1) {
-                        if (piecesrc.getName().equals("Rat")&&piecedest.getName().equals("Elephant")&&ratinriver(src,dest)!=true) {
-                            t = true;
-                        } else {
-                            if (acrossriver(src, dest) == false) {
-                                t = true;
-                            } else {
-                                t = false;
-                            }
-                        }
-                    } else if (calculateDistance(src, dest) == 3 || calculateDistance(src, dest) == 5) {
-                        if (!piecesrc.getName().equals("Lion" )&& !piecesrc.getName().equals("Tiger")) {
-                            t = false;
-                        } else {
-                            if (ratinriver(src, dest) == true) {
-                                t = false;
-                            } else {
-                                if (acrossallriver(src, dest) == true&&aroundriver(src,dest)==true) {
-                                    t = true;
-                                } else {
-                                    t = false;
-                                }
-
-                            }
-                        }
-                    } else {
-                        t = false;
-                    }
-                }
-            }
-            //Todo
-            if (piecesrc != null && piecedest == null) {
-                t = isValidMove(src, dest);
-            }
+        }//剩下的两边都有棋子
+        if(piecesrc.getOwner()==piecedest.getOwner()){
+            return false;
+        }//不是同一方
+        /*
+        河里的老鼠不能被任何棋子吃
+        河里的老鼠不能吃岸上的大象
+        狮子老虎可以跳河吃子
+            老鼠在河中央不能吃
+        老鼠可以吃大象
+        其余只要按照rank就可以吃
+         */
+        if(river.contains(dest)){//河里有的棋子一定是老鼠
+            return false;
         }
-        return t;
-
+        if(river.contains(src)){//老鼠啥棋子都吃不了
+            return false;
+        }
+        if(distance>1 && (piecesrc.getName().equals("Lion") || piecedest.getName().equals("Tiger"))){
+            if(row1(src,dest)==0||col1(src,dest)==0) return false;
+            for (int i = 1; i < 4; i++) {
+                int temp=src.getRow()+row1(src,dest)*i;
+                ChessboardPoint c=new ChessboardPoint(temp,src.getCol());
+                if(!river.contains(c)) return false;
+                if(getChessPieceAt(c)!=null) return false;
+            }
+            for (int i = 1; i < 3; i++) {
+                int temp=src.getCol()+col1(src,dest)*i;
+                ChessboardPoint c=new ChessboardPoint(src.getRow(),temp);
+                if(!river.contains(c)) return false;
+                if(getChessPieceAt(c)!=null) return false;
+            }
+            return piecesrc.canCapture(piecedest);
+        }
+        return distance==1 && piecesrc.canCapture(piecedest);
+//        boolean t = true;
+//        if (piecesrc == null ) {
+//            t = false;
+//        }
+//        if (((src.getCol() != dest.getCol() && src.getRow() != dest.getRow()) || (src.getCol() == dest.getCol() && src.getRow() == dest.getRow()) || src.getCol() > 6 || dest.getCol() > 6 || src.getRow() > 8 || dest.getRow() > 8) || src == null) {
+//            return false;
+//        } else {
+//            if (piecesrc != null && piecedest != null) {
+//                if (piecesrc.canCapture(piecedest) == false) {
+//                    t = false;
+//                } else {
+//                    if (calculateDistance(src, dest) == 1) {
+//                        if (piecesrc.getName().equals("Rat")&&piecedest.getName().equals("Elephant")&&ratinriver(src,dest)!=true) {
+//                            t = true;
+//                        } else {
+//                            if (acrossriver(src, dest) == false) {
+//                                t = true;
+//                            } else {
+//                                t = false;
+//                            }
+//                        }
+//                    } else if (calculateDistance(src, dest) == 3 || calculateDistance(src, dest) == 5) {
+//                        if (!piecesrc.getName().equals("Lion" )&& !piecesrc.getName().equals("Tiger")) {
+//                            t = false;
+//                        } else {
+//                            if (ratinriver(src, dest) == true) {
+//                                t = false;
+//                            } else {
+//                                if (acrossallriver(src, dest) == true&&aroundriver(src,dest)==true) {
+//                                    t = true;
+//                                } else {
+//                                    t = false;
+//                                }
+//
+//                            }
+//                        }
+//                    } else {
+//                        t = false;
+//                    }
+//                }
+//            }
+//            //Todo
+//            if (piecesrc != null && piecedest == null) {
+//                t = isValidMove(src, dest);
+//            }
+//        }
+//        return t;
     }
 
     public void  Trapiszero(ChessboardPoint point ){

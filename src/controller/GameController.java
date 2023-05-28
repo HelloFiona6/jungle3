@@ -146,8 +146,8 @@ public class GameController implements GameListener {
             component.repaint();
         }else if(model.isValidCapture(selectedPoint,point)&&selectedPoint!=null){//可以吃
             recordMove(selectedPoint,point,getTurn(),currentPlayer);//记录怎么走
+            model.captureChessPiece(selectedPoint, point);//走
             view.removeChessComponentAtGrid(point);
-            model.moveChessPiece(selectedPoint, point);//走
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
 
             //如果没有棋子可以走，或者没棋子了，另一方胜利

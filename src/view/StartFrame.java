@@ -13,7 +13,7 @@ public class StartFrame extends JFrame {
     private final int HEIGHT;
     private ImagePanel startPanel;
     //private ChessGameFrame frame;
-    private ImageIcon back=new ImageIcon(getClass().getResource("/Background/start.jpg"));
+    private ImageIcon back=new ImageIcon("resource\\Background\\start.jpg");
 
     public StartFrame(int width,int height){
         setTitle("Jungle");
