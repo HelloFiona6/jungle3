@@ -26,6 +26,7 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
     private final Set<ChessboardPoint> densCell = new HashSet<>();
 
     private GameController gameController;
+    private ImageIcon image;
 
     /*
     棋盘中还包含什么
@@ -162,6 +163,9 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
                     //this.add(cell);
                 }else if(trapCell.contains(temp)) {
                     cell = new CellComponent(new Color(129, 112, 112), calculatePoint(i, j), CHESS_SIZE);
+//                    Graphics g = null;
+//                    paintComponent(g);
+//                    image=new ImageIcon("/resource/ChessBoard/trap.png");
                 }else if(densCell.contains(temp)){
                     cell = new CellComponent(new Color(91, 15, 15), calculatePoint(i, j), CHESS_SIZE);
                 } else {
@@ -173,6 +177,14 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
             }
         }
     }
+//    @Override
+//    protected void paintComponent(Graphics g) {
+//        super.paintComponent(g);
+//        Graphics2D g2 = (Graphics2D) g;
+//        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//        image=new ImageIcon("resource\\ChessImage\\Cat.png");
+//        g.drawImage(image.getImage(),0,0,getWidth(),getHeight(), this);
+//    }
 
     //ok
     public void registerController(GameController gameController) {
@@ -275,6 +287,7 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.drawImage(image.getImage(),0,0,CHESS_SIZE,CHESS_SIZE, this);
     }
 
     //ok 找鼠标点到哪里

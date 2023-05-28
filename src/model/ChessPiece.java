@@ -20,23 +20,21 @@ public abstract class ChessPiece implements Serializable {
         if(target.getOwner().equals(owner)){
             return false;
         }
-        if (rank >= target.rank && rank != 8) {
-            return true;
-        } else if (rank == 8 && target.rank != 1) {
-            return true;
-        } else if (rank == 1 && target.rank == 8 ) {
-            return true;
-        } else {
+        if(rank == 8 && target.rank != 1){
             return false;
         }
+        if (rank == 1 && target.rank == 8 ) {
+            return true;
+        }
+        if (rank >= target.rank) {
+            return true;
+        }
+        return false;
     }
     public  boolean ratinriver(){
         return  false;//没做完
     }
 
-   // public abstract boolean isValidMove(ChessboardPoint target);
-    public abstract boolean isValidCapture(ChessboardPoint src, ChessboardPoint dest);
-    //todo 这里isValidCapture传参可以改，我随便写的
     public String getName() {
         return name;
     }

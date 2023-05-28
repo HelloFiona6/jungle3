@@ -17,9 +17,6 @@ public class CatChessComponent extends ChessComponent {
     public CatChessComponent(PlayerColor owner, int size) {
         super(owner,size);
     }
-
-
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

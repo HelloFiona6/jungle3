@@ -114,18 +114,20 @@ public class GameController implements GameListener {
             model.moveChessPiece(selectedPoint, point);//走
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
             System.out.println(steps);
-            if(model.inDens(point)) {//如果进入兽穴
+
+            if(model.dens(point)) {//如果进入兽穴
                 view.repaint();
                 win();
             }
+
             //进入陷阱
             model.trap(point,selectedPoint);
             selectedPoint = null;
             swapColor();
             addTurn();
             view.repaint();
-
-
+        }else{
+            System.out.println("Illegal move");
         }
     }
     // click a cell with a chess
