@@ -153,23 +153,28 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
         densCell.add(new ChessboardPoint(0,3));
         densCell.add(new ChessboardPoint(8,3));
 
+
         //遍历+放颜色
         for (int i = 0; i < CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < CHESSBOARD_COL_SIZE.getNum(); j++) {
                 ChessboardPoint temp = new ChessboardPoint(i, j);
                 CellComponent cell;
                 if (riverCell.contains(temp)) {
-                    cell = new CellComponent(new Color(137, 219, 232), calculatePoint(i, j), CHESS_SIZE);
-                    //this.add(cell);
+                    cell = new CellComponent(new Color(85, 175, 189), calculatePoint(i, j), CHESS_SIZE);
                 }else if(trapCell.contains(temp)) {
                     cell = new CellComponent(new Color(129, 112, 112), calculatePoint(i, j), CHESS_SIZE);
-//                    Graphics g = null;
-//                    paintComponent(g);
-//                    image=new ImageIcon("/resource/ChessBoard/trap.png");
+                    image=new ImageIcon("resource\\ChessBoard\\trap.png");
+                    cell.setImage(image);
                 }else if(densCell.contains(temp)){
                     cell = new CellComponent(new Color(91, 15, 15), calculatePoint(i, j), CHESS_SIZE);
+                    if(temp.equals(new ChessboardPoint(8,3))){
+                        image=new ImageIcon("resource\\ChessBoard\\densRed.png");
+                    }else{
+                        image=new ImageIcon("resource\\ChessBoard\\densBlue.png");
+                    }
+                    cell.setImage(image);
                 } else {
-                    cell = new CellComponent(new Color(126, 147, 126), calculatePoint(i, j), CHESS_SIZE);
+                    cell = new CellComponent(new Color(140, 150, 103), calculatePoint(i, j), CHESS_SIZE);
                     //this.add(cell);
                 }
                 this.add(cell);
@@ -287,7 +292,7 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.drawImage(image.getImage(),0,0,CHESS_SIZE,CHESS_SIZE, this);
+//        g.drawImage(image.getImage(),0,0,CHESS_SIZE,CHESS_SIZE, this);
     }
 
     //ok 找鼠标点到哪里
@@ -308,17 +313,23 @@ public class ChessboardComponent extends JComponent {//绘制时棋盘
     //胜利弹窗
     public void optionWinPanel(PlayerColor winner){
         //按钮标签
-        Object[] options={"New Game","Exit"};//再来一局还是返回主页
+//        Object[] options={"New Game","Exit"};//再来一局还是返回主页
+//        //显示对话框
+//        int result=JOptionPane.showOptionDialog(null,"The winner is "+winner,"Win!",
+//                JOptionPane.DEFAULT_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
+//        //每个按钮的结果
+//        if(result==JOptionPane.YES_OPTION){
+//            gameController.restartGame();
+//        }else{
+//            //chessGameFrame.setVisible(false);
+//            StartFrame startFrame=new StartFrame(500,810);
+//            //返回主页面
+//        }
+        Object[] options={"New Game"};//再来一局还是返回主页
         //显示对话框
         int result=JOptionPane.showOptionDialog(null,"The winner is "+winner,"Win!",
                 JOptionPane.DEFAULT_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
         //每个按钮的结果
-        if(result==JOptionPane.YES_OPTION){
-            gameController.restartGame();
-//            JFrame topFrame=(JFrame) JOptionPane.getRootFrame();
-//            topFrame.dispose();
-        }else{
-            //返回主页面
-        }
+        if(result==JOptionPane.YES_OPTION) gameController.restartGame();
     }
 }

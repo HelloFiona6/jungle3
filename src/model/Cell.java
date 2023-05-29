@@ -1,5 +1,6 @@
 package model;
 
+import javax.swing.*;
 import java.io.Serializable;
 /**
  * This class describe the slot for Chess in Chessboard

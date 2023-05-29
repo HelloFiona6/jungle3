@@ -21,20 +21,20 @@ public abstract class ChessPiece implements Serializable {
             return false;
         }
         if(rank == 8 && target.rank != 1){
-            return false;
+            return true;
         }
         if (rank == 1 && target.rank == 8 ) {
             return true;
         }
+        if(rank==8 && target.rank==1){
+            return false;
+        }
         if (rank >= target.rank) {
             return true;
         }
+
         return false;
     }
-    public  boolean ratinriver(){
-        return  false;//没做完
-    }
-
     public String getName() {
         return name;
     }

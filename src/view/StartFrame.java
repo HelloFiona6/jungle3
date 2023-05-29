@@ -27,7 +27,7 @@ public class StartFrame extends JFrame {
         setVisible(true);
         background();
         addMultiplayerGameButton();
-        addSinglePlayerGameButton();
+        //addSinglePlayerGameButton();
         addRuleButton();
     }
     //排名
@@ -53,18 +53,18 @@ public class StartFrame extends JFrame {
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
     }
-    private void addSinglePlayerGameButton() {
-        JButton button = new JButton("Single Player Game");
-        button.addActionListener((e) -> //触发的事件
-        {
-            playMusic("/music/button.wav");
-            startGame();
-        });
-        button.setLocation(WIDTH/2-125, HEIGHT / 2+80);
-        button.setSize(250, 60);
-        button.setFont(new Font("Rockwell", Font.BOLD, 20));
-        add(button);
-    }
+//    private void addSinglePlayerGameButton() {
+//        JButton button = new JButton("Single Player Game");
+//        button.addActionListener((e) -> //触发的事件
+//        {
+//            playMusic("/music/button.wav");
+//            startGame();
+//        });
+//        button.setLocation(WIDTH/2-125, HEIGHT / 2+80);
+//        button.setSize(250, 60);
+//        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+//        add(button);
+//    }
     private void startGame(){
         ChessGameFrame mainFrame = new ChessGameFrame(1100, 810);//窗口初始化
         GameController gameController = new GameController(mainFrame.getChessboardComponent(), new Chessboard());
@@ -125,7 +125,7 @@ public class StartFrame extends JFrame {
                     enter the river, and lions and tigers could jump across the river.\s""","Rules",JOptionPane.PLAIN_MESSAGE);
 
         });
-        rule.setLocation(WIDTH/2-125, HEIGHT / 2+160 );
+        rule.setLocation(WIDTH/2-125, HEIGHT / 2+100 );
         rule.setSize(250, 60);
         rule.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(rule);

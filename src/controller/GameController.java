@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -37,6 +38,7 @@ public class GameController implements GameListener {
     private List<Step> steps; //undo
     private Step step;
     private PlayerColor winner;
+    private Set<ChessboardPoint> validMoves;
 
     //ok
     public GameController(ChessboardComponent view, Chessboard model) {
@@ -115,17 +117,20 @@ public class GameController implements GameListener {
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));//更换表面
             System.out.println(steps);
 
+            model.trap(point,selectedPoint);
+
             if(model.dens(point)) {//如果进入兽穴
                 view.repaint();
                 win();
+            }else if(model.checkWin(currentPlayer)){
+                view.repaint();
+                win();
+            }else {
+                selectedPoint = null;
+                swapColor();
+                addTurn();
+                view.repaint();
             }
-
-            //进入陷阱
-            model.trap(point,selectedPoint);
-            selectedPoint = null;
-            swapColor();
-            addTurn();
-            view.repaint();
         }else{
             System.out.println("Illegal move");
         }
@@ -139,10 +144,8 @@ public class GameController implements GameListener {
                 component.setSelected(true);
                 component.repaint();
 
-                //show ValidMoves
             }
         } else if (selectedPoint.equals(point)) {//点两下
-            //hideValidMove
             selectedPoint = null;
             component.setSelected(false);
             component.repaint();
@@ -181,10 +184,12 @@ public class GameController implements GameListener {
         5. view.repaint()
         6. 行棋方重新设为蓝色
          */
+        selectedPoint=null;
         model.removeAllPiece();
         model.initPieces();
         view.removeAllPieces();
         view.initiateChessComponent(model);
+
         if(currentPlayer==PlayerColor.BLUE){
             turn=0;
         }else {

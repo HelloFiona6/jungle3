@@ -6,7 +6,6 @@ import view.image.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 import java.util.HashMap;
 
 /**
@@ -202,10 +201,10 @@ public class ChessGameFrame extends JFrame {
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
         HashMap<Integer,String> pic=new HashMap<>();
-        pic.put(0,"/Background/picture1.jpg");
+        pic.put(0, "/Background/picture4.jpg");
         pic.put(1,"/Background/picture2.jpg");
         pic.put(2,"/Background/picture3.jpg");
-        pic.put(3,"/Background/picture4.jpg");
+        pic.put(3, "/Background/picture1.jpg");
 
         button.addActionListener(e -> {
             //换图片
